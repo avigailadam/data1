@@ -42,7 +42,7 @@ class AvlTree {
         if (root == nullptr) return;
         inOrderAux(root->leftSon, vec);
         vec.push_back(root->data);
-        inOrderAux(root->rightSon,vec);
+        inOrderAux(root->rightSon, vec);
     }
 
 public:
@@ -91,17 +91,36 @@ public:
         return leftSon->getHeight() - rightSon->getHeight();
     }
 
-//        void roll_LL() {
-//
-//        }
-//
-//        void roll_LR() {
-//
-//        }
-//
-//        void roll_RR() {
-//
-//        }
+    void roll_LL() {
+        AvlTree<T> *parent = this;
+        AvlTree<T> *left_son = parent->leftSon;
+        parent->leftSon = left_son->rightSon;
+        parent->leftSon->father = parent;
+        left_son->rightSon = parent;
+        left_son->father= parent->father;
+        parent->father = left_son;
+        this=left_son;
+        parent->height--;
+    }
+
+    void roll_LR() {
+        AvlTree<T> *current = this;
+        AvlTree<T> *left_son = current->leftSon;
+        AvlTree<T> *right_grandson = current->leftSon;
+
+    }
+
+    void roll_RR() {
+        AvlTree<T> *parent = this;
+        AvlTree<T> *right_son = parent->rightSon;
+        parent->rightSon = right_son->leftSon;
+        parent->rightSon->father = parent;
+        right_son->leftSon = parent;
+        right_son->father= parent->father;
+        parent->father = right_son;
+        this=right_son;
+        parent->height--;
+    }
 //
 //        void roll_RL() {
 //
@@ -133,7 +152,7 @@ public:
 
     template<class get_info>
     void insert(T x, get_info getInfo) {
-        if(size == 0){
+        if (size == 0) {
             this->data = x;
             size += 1;
             return;
