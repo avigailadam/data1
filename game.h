@@ -3,24 +3,21 @@
 #include "avl.h"
 #include "player.h"
 #include "group.h"
+#include "PlayerLevel.h"
 
 class Game{
-    AvlTree<std::shared_ptr<Player>> playersTree;
-    AvlTree<std::shared_ptr<Player>> levelsTree;
+    AvlTree<Player> playersTree;
+    AvlTree<PlayerLevel> levelsTree;
     AvlTree<Group> groupsTree;
 public:
-    Game();
-
-    virtual ~Game();
-
     void AddGroup(int groupID);
     void AddPlayer(int playerID, int groupID, int level);
     void RemovePlayer(int PlayerID);
     void ReplaceGroup(int groupID, int replacementID);
     void IncreaseLevel(int playerID, int levelIncrease);
-    void getHeighestLevel(int groupID, int* playerID);
-    void GetAllPlayersByLevel(int groupID, int** players, int* numOfPlayers);
-    void getGroupsHighestLevel(int numOfGroups, int **Players);
+    int getHighestLevel(int groupID);
+    std::vector<std::shared_ptr<Player>> GetAllPlayersByLevel(int groupID);
+    std::vector<std::shared_ptr<Player>>  getGroupsHighestLevel(int numOfGroups);
 
 
 };

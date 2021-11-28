@@ -7,14 +7,6 @@
 template<class T>
 class AvlTree;
 
-class GetInfo {
-public:
-    int operator()(int x) {
-        return x;
-    }
-};
-
-
 template<class T>
 void switchNodes(AvlTree<T> *node1, AvlTree<T> *node2) {
     AvlTree<T> *tmp = node1->father;
@@ -97,9 +89,9 @@ public:
         parent->leftSon = left_son->rightSon;
         parent->leftSon->father = parent;
         left_son->rightSon = parent;
-        left_son->father= parent->father;
+        left_son->father = parent->father;
         parent->father = left_son;
-        this=left_son;
+        this = left_son;
         parent->height--;
     }
 
@@ -116,9 +108,9 @@ public:
         parent->rightSon = right_son->leftSon;
         parent->rightSon->father = parent;
         right_son->leftSon = parent;
-        right_son->father= parent->father;
+        right_son->father = parent->father;
         parent->father = right_son;
-        this=right_son;
+        this = right_son;
         parent->height--;
     }
 //
@@ -150,8 +142,8 @@ public:
 //
 //        }
 
-    template<class get_info>
-    void insert(T x, get_info getInfo) {
+
+    void insert(T x) {
         if (size == 0) {
             this->data = x;
             size += 1;
@@ -160,17 +152,14 @@ public:
         AvlTree<T> *current = this;
         AvlTree<T> *leaf = new AvlTree<T>(x, nullptr, nullptr, nullptr);
         leaf->size = 1;
-        int thisInfo, otherInfo;
         do {
-            thisInfo = getInfo(current->data);
-            otherInfo = getInfo(leaf->data);
-            if (thisInfo == otherInfo) {
-                throw exceptions::AlreadyExist();
+            if (current->data == leaf->data) {
+                throw AlreadyExist();
             }
             leaf->father = current;
-            current = otherInfo < thisInfo ? current->leftSon : current->rightSon;
+            current = leaf->data > current->data ? current->rightSon : current->leftSon;
         } while (current != nullptr);
-        if ((int) getInfo(leaf->data) > (int) getInfo(leaf->father->data))
+        if (leaf->data > leaf->father->data)
             leaf->father->rightSon = leaf;
         else
             leaf->father->leftSon = leaf;
@@ -179,24 +168,29 @@ public:
 //            TODO: updateSize();
     }
 
-    template<class get_info>
-    AvlTree<T> *find(T info, get_info getInfo) {
+private:
+    AvlTree<T> *internal_find(T info) {
         AvlTree<T> *current = this;
         AvlTree<T> *leaf = new AvlTree<T>(info, nullptr, nullptr, nullptr);
-        int thisInfo, otherInfo;
         do {
-            thisInfo = getInfo(current->data);
-            otherInfo = getInfo(leaf->data);
-            if (thisInfo == otherInfo) {
+            if (current->data == leaf->data) {
                 return current;
             }
             leaf->father = current;
-            current = otherInfo < thisInfo ? current->leftSon : current->rightSon;
+            current = leaf->data > current->data ? current->rightSon : current->leftSon;
         } while (current != nullptr);
         return nullptr;
 
     }
 
+public:
+    T& find(const T& info){
+        AvlTree<T> *result = internal_find(info);
+        if (result == nullptr)
+            throw NotExist();
+        return result->data;
+    }
+    
     std::vector<T> inOrder() {
         std::vector<T> vec;
         inOrderAux(this, vec);
@@ -206,12 +200,10 @@ public:
     template<class U>
     friend void switchNodes(AvlTree<U> *node1, AvlTree<U> *node2);
 
-
-    template<class get_info>
-    void remove(T info, get_info getInfo) {
-        AvlTree<T> *toRemove = find(info, getInfo);
+    void remove(T info) {
+        AvlTree<T> *toRemove = internal_find(info);
         if (toRemove == nullptr)
-            throw exceptions::NotExist();
+            throw NotExist();
         AvlTree<T> *left = toRemove->leftSon;
         AvlTree<T> *right = toRemove->rightSon;
         AvlTree<T> *curr_father = toRemove->father;

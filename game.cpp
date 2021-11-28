@@ -1,15 +1,14 @@
 #include "game.h"
 
-Game::Game() {}
-
-Game::~Game() {}
-
 void Game::AddGroup(int groupID) {
-
+    Group group(groupID);
+    groupsTree.insert(group);
 }
 
 void Game::AddPlayer(int playerID, int groupID, int level) {
-
+    PlayerLevel player(level, playerID);
+    Group group = groupsTree.find(Group(groupID));
+    group.addPlayer(player);
 }
 
 void Game::RemovePlayer(int PlayerID) {
@@ -24,14 +23,15 @@ void Game::IncreaseLevel(int playerID, int levelIncrease) {
 
 }
 
-void Game::getHeighestLevel(int groupID, int *playerID) {
-
+int Game::getHighestLevel(int groupID) {
+    return 0;
 }
 
-void Game::GetAllPlayersByLevel(int groupID, int **players, int *numOfPlayers) {
-
+std::vector<std::shared_ptr<Player>> Game::GetAllPlayersByLevel(int groupID) {
+    return std::vector<std::shared_ptr<Player>>();
 }
 
-void Game::getGroupsHighestLevel(int numOfGroups, int **Players) {
-
+std::vector<std::shared_ptr<Player>> Game::getGroupsHighestLevel(int numOfGroups) {
+    return std::vector<std::shared_ptr<Player>>();
 }
+

@@ -3,20 +3,19 @@
 
 #include <memory>
 #include "avl.h"
+#include "group.h"
+#include <assert>
 
-class Player{
-    AvlTree<std::shared_ptr<Player>> teamPointer;
+
+class Player {
+    Group& group;
     int level;
-    int id;
+    const int id;
 public:
-    Player(const AvlTree<std::shared_ptr<Player>> &teamPointer, int level, int id) : teamPointer(teamPointer),
-                                                                                     level(level), id(id) {}
+    Player(Group &group, int level, int id) : group(group), level(level), id(id) {}
 
-    virtual ~Player() {
 
-    }
-
-    const AvlTree<std::shared_ptr<Player>> &getTeamPointer() const {
+     Group& getGroup() const {
         return teamPointer;
     }
 
@@ -28,7 +27,18 @@ public:
         return id;
     }
 
-};
+    bool operator>(const Player &other) const {
+        return id > other.id;
+    }
 
+    bool operator==(const Player &other) const {
+        return id == other.id;
+    }
+
+    bool operator<(const Player &other) const {
+        return id < other.id;
+    }
+
+};
 
 #endif //HW1_PLAYER_H
