@@ -14,14 +14,14 @@ int main() {
     catch (...) {
         std::cout << "exists" << std::endl;
     }
-    std::cout << (tree.find(x)) << std::endl;
+    std::cout << *(tree.find(x)) << std::endl;
     std::vector<int> v = tree.inOrder();
     std::cout<<v.size()<<std::endl;
     for (int i: v) {
         std::cout << i << std::endl;
     }
     tree.remove(x);
-    std::cout << (tree.find(x)) << std::endl;
+    std::cout << *(tree.find(x)) << std::endl;
 
 }
 

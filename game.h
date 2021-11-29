@@ -1,12 +1,12 @@
 #ifndef HW1_GAME_H
 #define HW1_GAME_H
 #include "avl.h"
-#include "player.h"
+#include "player_by_id.h"
 #include "group.h"
 #include "PlayerLevel.h"
 
 class Game{
-    AvlTree<Player> playersTree;
+    AvlTree<PlayerById> playersTree;
     AvlTree<PlayerLevel> levelsTree;
     AvlTree<Group> groupsTree;
 public:
@@ -17,8 +17,8 @@ public:
     void ReplaceGroup(int groupID, int replacementID);
     void IncreaseLevel(int playerID, int levelIncrease);
     int getHighestLevel(int groupID);
-    std::vector<std::shared_ptr<Player>> GetAllPlayersByLevel(int groupID);
-    std::vector<std::shared_ptr<Player>>  getGroupsHighestLevel(int numOfGroups);
+    std::vector<std::shared_ptr<PlayerById>> GetAllPlayersByLevel(int groupID);
+    std::vector<std::shared_ptr<PlayerById>>  getGroupsHighestLevel(int numOfGroups);
 
 
 };

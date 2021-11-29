@@ -37,6 +37,9 @@ public:
     void addPlayer(PlayerLevel* player){
         playersByLevel.insert(player);
     }
+    void removePlayer(PlayerLevel* player){
+        playersByLevel.remove(player);
+    }
 };
 
 #endif //HW1_GROUP_H

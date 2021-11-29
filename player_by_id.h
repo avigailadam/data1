@@ -1,5 +1,5 @@
-#ifndef HW1_PLAYER_H
-#define HW1_PLAYER_H
+#ifndef HW1_PLAYER_BY_ID_H
+#define HW1_PLAYER_BY_ID_H
 
 #include <memory>
 #include "avl.h"
@@ -7,13 +7,13 @@
 #include <assert.h>
 
 
-class Player {
+class PlayerById {
     Group& group;
     int level;
     const int id;
 public:
-    Player(Group &group, int level, int id) : group(group), level(level), id(id) {}
-
+    PlayerById(Group &group, int level, int id) : group(group), level(level), id(id) {}
+    PlayerById(int id) : id(id) {}
 
      Group& getGroup() const {
         return group;
@@ -27,18 +27,18 @@ public:
         return id;
     }
 
-    bool operator>(const Player &other) const {
+    bool operator>(const PlayerById &other) const {
         return id > other.id;
     }
 
-    bool operator==(const Player &other) const {
+    bool operator==(const PlayerById &other) const {
         return id == other.id;
     }
 
-    bool operator<(const Player &other) const {
+    bool operator<(const PlayerById &other) const {
         return id < other.id;
     }
 
 };
 
-#endif //HW1_PLAYER_H
+#endif //HW1_PLAYER_BY_ID_H

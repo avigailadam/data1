@@ -23,6 +23,7 @@ void switchNodes(AvlTree<T> *node1, AvlTree<T> *node2) {
 template<class T>
 class AvlTree {
     T *data;
+    AvlTree<T> *best_player;
     int height;
     int size;
     AvlTree<T> *father;
@@ -43,17 +44,36 @@ public:
         rightSon = nullptr;
         leftSon = nullptr;
         data = nullptr;
+        best_player = nullptr;
         height = 0;
         size = 0;
     }
 
-    AvlTree(T data, AvlTree<T> *rightSon, AvlTree<T> *leftSon, AvlTree<T> *father) : data(data), rightSon(rightSon),
-                                                                                     leftSon(leftSon) {
+    AvlTree(T *data, AvlTree<T> *best_player, AvlTree<T> *rightSon, AvlTree<T> *leftSon, AvlTree<T> *father) : data
+                                                                                                                       (data),
+                                                                                                               best_player(
+                                                                                                                       best_player),
+                                                                                                               rightSon(
+                                                                                                                       rightSon),
+                                                                                                               leftSon(leftSon),
+                                                                                                               father(father) {
         height = 0;
         size = 1;
     }
 
     virtual ~AvlTree() = default;
+
+    void setBestPlayer() {
+        AvlTree<T> *current = this;
+        while (current->rightSon != nullptr) {
+            current = current->rightSon;
+        }
+        best_player = current;
+    }
+
+    AvlTree<T> *getBestPlayer() {
+        return best_player;
+    }
 
 
     T getData() const {
@@ -148,29 +168,32 @@ public:
         if (size == 0) {
             this->data = x;
             size += 1;
+            best_player = this;
             return;
         }
         AvlTree<T> *current = this;
-        AvlTree<T> *leaf = new AvlTree<T>(x, nullptr, nullptr, nullptr);
+        AvlTree<T> *leaf = new AvlTree<T>(x, nullptr, nullptr, nullptr, nullptr);
         leaf->size = 1;
         do {
             if (current->data == leaf->data) {
+                delete leaf;
                 throw AlreadyExist();
             }
             leaf->father = current;
-            current = leaf->data > current->data ? current->rightSon : current->leftSon;
+            current = *(leaf->data) > *(current->data) ? current->rightSon : current->leftSon;
         } while (current != nullptr);
         if (leaf->data > leaf->father->data)
             leaf->father->rightSon = leaf;
         else
             leaf->father->leftSon = leaf;
+        setBestPlayer();
 //            TODO: balance();
 //            TODO: updateHeights();
 //            TODO: updateSize();
     }
 
 private:
-    AvlTree<T>* internal_find(T* info) {
+    AvlTree<T> *internal_find(T *info) {
         AvlTree<T> *current = this;
         do {
             if (*(current->data) == *(info)) {
@@ -199,7 +222,7 @@ public:
     template<class U>
     friend void switchNodes(AvlTree<U> *node1, AvlTree<U> *node2);
 
-    void remove(T info) {
+    void remove(T *info) {
         AvlTree<T> *toRemove = internal_find(info);
         if (toRemove == nullptr)
             throw NotExist();
@@ -217,6 +240,7 @@ public:
         }
         if (left == nullptr && right == nullptr) {
             delete toRemove;
+            setBestPlayer();
             return;
         }
         if (left == nullptr || right == nullptr) {
@@ -224,6 +248,7 @@ public:
             (curr_father->leftSon == toRemove ? curr_father->leftSon : curr_father->rightSon) = put;
             put->father = curr_father;
             delete toRemove;
+            setBestPlayer();
             return;
         }
 //            TODO: updateSize();
