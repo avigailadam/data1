@@ -20,6 +20,8 @@ void switchNodes(AvlTree<T> *node1, AvlTree<T> *node2) {
     node2->leftSon = tmp;
 }
 
+
+
 template<class T>
 class AvlTree {
     T *data;
@@ -47,6 +49,26 @@ public:
         best_player = nullptr;
         height = 0;
         size = 0;
+    }
+
+    void setData(T *data) {
+        data = data;
+    }
+
+    void setSize(int size) {
+        size = size;
+    }
+
+    void setFather(AvlTree<T> *father) {
+        father = father;
+    }
+
+    void setRightSon(AvlTree<T> *rightSon) {
+        rightSon = rightSon;
+    }
+
+    void setLeftSon(AvlTree<T> *leftSon) {
+        leftSon = leftSon;
     }
 
     AvlTree(T *data, AvlTree<T> *best_player, AvlTree<T> *rightSon, AvlTree<T> *leftSon, AvlTree<T> *father) : data

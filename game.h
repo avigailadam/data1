@@ -1,7 +1,7 @@
 #ifndef HW1_GAME_H
 #define HW1_GAME_H
 #include "avl.h"
-#include "player_by_id.h"
+#include "PlayerById.h"
 #include "group.h"
 #include "PlayerLevel.h"
 
@@ -9,6 +9,9 @@ class Game{
     AvlTree<PlayerById> playersTree;
     AvlTree<PlayerLevel> levelsTree;
     AvlTree<Group> groupsTree;
+
+    std::vector<PlayerLevel> merge(std::vector<PlayerLevel> v1, std::vector<PlayerLevel> v2);
+    AvlTree<PlayerLevel>* recursiveAvl(std::vector<PlayerLevel> vector, AvlTree<PlayerLevel>* father);
 public:
 
     void AddGroup(int groupID);
@@ -21,6 +24,7 @@ public:
     std::vector<std::shared_ptr<PlayerById>>  getGroupsHighestLevel(int numOfGroups);
 
 
+    std::vector<PlayerLevel> sliceVec(std::vector<PlayerLevel> vector, int start, int end);
 };
 
 

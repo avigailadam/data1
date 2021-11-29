@@ -1,17 +1,24 @@
 #ifndef HW1_GROUP_H
 #define HW1_GROUP_H
 
+#include <vector>
 #include "avl.h"
 #include "PlayerLevel.h"
 
 class Group{
     int id;
-    AvlTree<PlayerLevel> playersByLevel;
+    AvlTree<PlayerLevel>* playersByLevel;
 public:
     Group(int id) : id(id){}
 
+    Group(int id, AvlTree<PlayerLevel> *playersByLevel) : id(id), playersByLevel(playersByLevel) {}
+
     virtual ~Group() {
 
+    }
+
+    std::vector<PlayerLevel> getInorderLevel(){
+        return playersByLevel->inOrder();
     }
 
     int getId() const {
@@ -31,14 +38,16 @@ public:
     }
 
     const AvlTree<PlayerLevel> &getPlayersByLevel() const {
-        return playersByLevel;
+        return *playersByLevel;
     }
 
+
+
     void addPlayer(PlayerLevel* player){
-        playersByLevel.insert(player);
+        playersByLevel->insert(player);
     }
     void removePlayer(PlayerLevel* player){
-        playersByLevel.remove(player);
+        playersByLevel->remove(player);
     }
 };
 
