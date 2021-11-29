@@ -13,7 +13,6 @@ class PlayerById {
     const int id;
 public:
     PlayerById(Group &group, int level, int id) : group(group), level(level), id(id) {}
-    PlayerById(int id) : id(id) {}
 
      Group& getGroup() const {
         return group;

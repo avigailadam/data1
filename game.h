@@ -8,11 +8,11 @@
 class Game{
     AvlTree<PlayerById> playersTree;
     AvlTree<PlayerLevel> levelsTree;
-    AvlTree<Group> groupsTree;
+    AvlTree<Group> groupTree;
 
-    std::vector<PlayerLevel> merge(std::vector<PlayerLevel> v1, std::vector<PlayerLevel> v2);
-    AvlTree<PlayerLevel>* recursiveAvl(std::vector<PlayerLevel> vector, AvlTree<PlayerLevel>* father);
+    std::vector<PlayerLevel> merge(std::vector<PlayerLevel*> v1, std::vector<PlayerLevel*> v2);
 public:
+    AvlTree<PlayerLevel>* recursiveAvl(std::vector<PlayerLevel> vector, AvlTree<PlayerLevel>* father);
 
     void AddGroup(int groupID);
     void AddPlayer(int playerID, int groupID, int level);

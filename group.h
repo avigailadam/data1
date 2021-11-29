@@ -9,6 +9,10 @@ class Group{
     int id;
     AvlTree<PlayerLevel>* playersByLevel;
 public:
+    Group(const Group& g) = delete;
+//    Group clone() {
+//        return Group(id, playersByLevel)
+//    }
     Group(int id) : id(id){}
 
     Group(int id, AvlTree<PlayerLevel> *playersByLevel) : id(id), playersByLevel(playersByLevel) {}
@@ -17,7 +21,7 @@ public:
 
     }
 
-    std::vector<PlayerLevel> getInorderLevel(){
+    std::vector<PlayerLevel*> getInorderLevel(){
         return playersByLevel->inOrder();
     }
 
@@ -43,10 +47,10 @@ public:
 
 
 
-    void addPlayer(PlayerLevel* player){
+    void addPlayer(const PlayerLevel& player){
         playersByLevel->insert(player);
     }
-    void removePlayer(PlayerLevel* player){
+    void removePlayer(const PlayerLevel& player){
         playersByLevel->remove(player);
     }
 };
