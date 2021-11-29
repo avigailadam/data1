@@ -34,7 +34,7 @@ public:
         return playersByLevel;
     }
 
-    void addPlayer(PlayerLevel player){
+    void addPlayer(PlayerLevel* player){
         playersByLevel.insert(player);
     }
 };

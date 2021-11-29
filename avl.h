@@ -22,7 +22,7 @@ void switchNodes(AvlTree<T> *node1, AvlTree<T> *node2) {
 
 template<class T>
 class AvlTree {
-    T data;
+    T *data;
     int height;
     int size;
     AvlTree<T> *father;
@@ -33,7 +33,7 @@ class AvlTree {
     void inOrderAux(AvlTree<T> *root, std::vector<T> &vec) {
         if (root == nullptr) return;
         inOrderAux(root->leftSon, vec);
-        vec.push_back(root->data);
+        vec.push_back(*(root->data));
         inOrderAux(root->rightSon, vec);
     }
 
@@ -42,6 +42,7 @@ public:
         father = nullptr;
         rightSon = nullptr;
         leftSon = nullptr;
+        data = nullptr;
         height = 0;
         size = 0;
     }
@@ -143,7 +144,7 @@ public:
 //        }
 
 
-    void insert(T x) {
+    void insert(T *x) {
         if (size == 0) {
             this->data = x;
             size += 1;
@@ -169,28 +170,26 @@ public:
     }
 
 private:
-    AvlTree<T> *internal_find(T info) {
+    AvlTree<T>* internal_find(T* info) {
         AvlTree<T> *current = this;
-        AvlTree<T> *leaf = new AvlTree<T>(info, nullptr, nullptr, nullptr);
         do {
-            if (current->data == leaf->data) {
+            if (*(current->data) == *(info)) {
                 return current;
             }
-            leaf->father = current;
-            current = leaf->data > current->data ? current->rightSon : current->leftSon;
+            current = *(info) > *(current->data) ? current->rightSon : current->leftSon;
         } while (current != nullptr);
         return nullptr;
 
     }
 
 public:
-    T& find(const T& info){
+    T *find(T *info) {
         AvlTree<T> *result = internal_find(info);
         if (result == nullptr)
             throw NotExist();
         return result->data;
     }
-    
+
     std::vector<T> inOrder() {
         std::vector<T> vec;
         inOrderAux(this, vec);

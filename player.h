@@ -4,7 +4,7 @@
 #include <memory>
 #include "avl.h"
 #include "group.h"
-#include <assert>
+#include <assert.h>
 
 
 class Player {
@@ -16,7 +16,7 @@ public:
 
 
      Group& getGroup() const {
-        return teamPointer;
+        return group;
     }
 
     int getLevel() const {

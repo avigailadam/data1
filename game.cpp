@@ -1,14 +1,15 @@
 #include "game.h"
 
 void Game::AddGroup(int groupID) {
-    Group group(groupID);
+    Group* group = new Group(groupID);
     groupsTree.insert(group);
 }
 
 void Game::AddPlayer(int playerID, int groupID, int level) {
-    PlayerLevel player(level, playerID);
-    Group group = groupsTree.find(Group(groupID));
-    group.addPlayer(player);
+    PlayerLevel* player = new PlayerLevel(level, playerID);
+    Group* group1 = new Group(groupID);
+    Group* group = groupsTree.find(group1);
+    group->addPlayer(player);
 }
 
 void Game::RemovePlayer(int PlayerID) {
