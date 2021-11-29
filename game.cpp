@@ -41,7 +41,7 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     delete groupTmp;
     std::vector<PlayerLevel> merged = merge(srcGroup->getInorderLevel(), repGroup->getInorderLevel());
     AvlTree<PlayerLevel> *newGroupLevels = recursiveAvl(merged, nullptr);
-    Group* newGroup = new Group(replacementID, newGroupLevels);
+    Group *newGroup = new Group(replacementID, newGroupLevels);
     groupsTree.remove(srcGroup);
     groupsTree.remove(repGroup);
     groupsTree.insert(newGroup);
@@ -50,8 +50,13 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
 }
 
 void Game::IncreaseLevel(int playerID, int levelIncrease) {
-
-
+    if (levelIncrease < 0 || playerID <= 0)
+        throw InvalidInput();
+    PlayerById *player_temp = new PlayerById(playerID);
+    PlayerById *player_by_id = playersTree.find(player_temp);
+    delete player_temp;
+    RemovePlayer(playerID);
+    AddPlayer(playerID, player_by_id->getGroup().getId(), player_by_id->getLevel() + levelIncrease);
 }
 
 int Game::getHighestLevel(int groupID) {
