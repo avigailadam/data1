@@ -36,5 +36,6 @@ int main(){
     expect.push_back("aba");
     expect.push_back("hi");
     assert(actual == expect);
+    assert(t1.getMax() == "hi");
 
 }

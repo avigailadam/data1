@@ -1,13 +1,12 @@
 #include "game.h"
 #include "avl.h"
+#include <bits/stdc++.h>
 
 void Game::AddGroup(int groupID) {
     groupTree.insert(std::unique_ptr<Group>(new Group(groupID)));
 }
 
 void Game::AddPlayer(int playerID, int groupID, int level) {
-    if (level < 0 || groupID <= 0 || playerID <= 0)
-        throw InvalidInput();
     PlayerLevel playerByLevel(level, playerID);
     Group &group = groupTree.find(Group(groupID));
     group.addPlayer(playerByLevel);
@@ -42,8 +41,6 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
 }
 
 void Game::IncreaseLevel(int playerID, int levelIncrease) {
-    if (levelIncrease < 0 || playerID <= 0)
-        throw InvalidInput();
     Group group(0);
     PlayerById playerTemp(group, playerID, playerID);
     PlayerById playerById = playersTree.find(playerTemp);
@@ -52,15 +49,50 @@ void Game::IncreaseLevel(int playerID, int levelIncrease) {
 }
 
 int Game::getHighestLevel(int groupID) {
-    return 0;
+    if (groupID < 0) {
+        PlayerLevel player = levelsTree.getMax();
+        return player.getLevel();
+    }
+    Group &group = groupTree.find(groupID);
+    PlayerLevel groupPlayer = group.getMax();
+    return groupPlayer.getLevel();
 }
 
-std::vector<std::shared_ptr<PlayerById>> Game::GetAllPlayersByLevel(int groupID) {
-    return std::vector<std::shared_ptr<PlayerById>>();
+std::vector<int> Game::GetAllPlayersByLevel(int groupID) {
+    if (groupID < 0) {
+        std::vector<PlayerLevel *> vec = levelsTree.inOrder();
+        std::vector<int> res = {};
+        for (PlayerLevel* i : vec) {
+            res.push_back(i->getId());
+        }
+        return res;
+    }
+    Group &group = groupTree.find(Group(groupID));
+    std::vector<PlayerLevel *> vec = group.getInorderLevel();
+    std::vector<int> res = {};
+    for (PlayerLevel *i : vec) {
+        res.push_back(i->getId());
+    }
+    return res;
 }
 
-std::vector<std::shared_ptr<PlayerById>> Game::getGroupsHighestLevel(int numOfGroups) {
-    return std::vector<std::shared_ptr<PlayerById>>();
+std::vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
+    if (numOfGroups < 1)
+        throw InvalidInput();
+    int counter = 0;
+    std::vector<int> res;
+    std::vector<Group *> groups = groupTree.inOrder();
+    for (Group *g: groups) {
+        assert(g != nullptr);
+        if (g->getPlayersByLevel().getSize() != 0) {
+            counter++;
+            continue;
+        }
+        res.push_back(g->getPlayersByLevel().getMax().getId());
+    }
+    if (counter < numOfGroups)
+        throw NotEnoughGroups();
+    return res;
 }
 
 std::vector<PlayerLevel> Game::merge(std::vector<PlayerLevel *> v1, std::vector<PlayerLevel *> v2) {

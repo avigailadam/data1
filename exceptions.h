@@ -2,6 +2,8 @@
 #ifndef HW1_EXCEPTIONS_H
 #define HW1_EXCEPTIONS_H
 #include <memory>
+#include <exception>
+
 
 class AlreadyExist : public std::exception  {
 public:

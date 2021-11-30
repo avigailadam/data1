@@ -6,15 +6,22 @@
 #include "avl.h"
 #include "PlayerLevel.h"
 
-class Group{
+class Group {
     int id;
-    AvlTree<PlayerLevel>* playersByLevel;
+    AvlTree<PlayerLevel> *playersByLevel;
 public:
-    Group(const Group& g) = delete;
+    Group(const Group &g) = delete;
+
 //    Group clone() {
 //        return Group(id, playersByLevel)
 //    }
-    Group(int id) : id(id){}
+    Group(int id) : id(id) {}
+
+    Group(std::unique_ptr<Group> other) : id(other->id) {
+        assert(other.get() != nullptr);
+        playersByLevel = other->playersByLevel;
+        other->playersByLevel = nullptr;
+    }
 
     Group(int id, AvlTree<PlayerLevel> *playersByLevel) : id(id), playersByLevel(playersByLevel) {}
 
@@ -22,7 +29,7 @@ public:
         delete this->playersByLevel;
     }
 
-    std::vector<PlayerLevel*> getInorderLevel(){
+    std::vector<PlayerLevel *> getInorderLevel() const {
         return playersByLevel->inOrder();
     }
 
@@ -30,15 +37,15 @@ public:
         return id;
     }
 
-    bool operator>(const Group& other) const{
+    bool operator>(const Group &other) const {
         return id > other.id;
     }
 
-    bool operator==(const Group& other) const{
+    bool operator==(const Group &other) const {
         return id == other.id;
     }
 
-    bool operator<(const Group& other) const{
+    bool operator<(const Group &other) const {
         return id < other.id;
     }
 
@@ -47,12 +54,18 @@ public:
     }
 
 
-
-    void addPlayer(const PlayerLevel& player){
+    void addPlayer(const PlayerLevel &player) {
         playersByLevel->insert(player);
     }
-    void removePlayer(const PlayerLevel& player){
+
+    void removePlayer(const PlayerLevel &player) {
         playersByLevel->remove(player);
+    }
+
+    PlayerLevel getMax() {
+        if (playersByLevel == nullptr)
+            throw NotExist();
+        return playersByLevel->getMax();
     }
 };
 

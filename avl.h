@@ -228,6 +228,7 @@ private:
         if (data == info) {
             return this;
         }
+        if (rightSon)
         InnerAvlTree<T> *leftFind = leftSon->internalFind(info);
         return leftFind == nullptr ? rightSon->internalFind(info) : leftFind;
     }
@@ -238,6 +239,7 @@ public:
     void insert(T x) {
         InnerAvlTree<T> *current = this;
         InnerAvlTree<T> *leaf = new InnerAvlTree<T>(x);
+        if (leaf== nullptr) throw AllocationError();
         leaf->size = 1;
         do {
             if (current->data == leaf->data) {
@@ -261,6 +263,7 @@ public:
     void insert(std::unique_ptr<T> x) {
         InnerAvlTree<T> *current = this;
         InnerAvlTree<T> *leaf = new InnerAvlTree<T>(std::move(x));
+        if (leaf== nullptr) throw AllocationError();
         leaf->size = 1;
         do {
             if (current->data == leaf->data) {
@@ -332,45 +335,58 @@ public:
 
 template<class T>
 class AvlTree {
-    InnerAvlTree<T> *data;
+    InnerAvlTree<T> *tree;
 
 public:
     AvlTree() {
-        data = nullptr;
+        tree = nullptr;
     }
+
 
     ~AvlTree() {
-        delete data;
+        delete tree;
     }
 
-    // Returns nullptr on empty
-    T *getMax() {
-        return data != nullptr ? data->getMax() : nullptr;
+    T getMax() const{
+        if (tree == nullptr)
+            throw NotExist();
+        InnerAvlTree<T>* maxNode = tree->getMax();
+        return maxNode->getData();
     }
 
     int getSize() const {
-        return data != nullptr ? data->getSize() : 0;
+        return tree != nullptr ? tree->getSize() : 0;
     }
 
     void insert(T x) {
-        if (data != nullptr)
-            data->insert(x);
+        if (tree != nullptr)
+            tree->insert(x);
         else
-            data = new InnerAvlTree<T>(x);
+            tree = new InnerAvlTree<T>(x);
+    }
+
+
+    void insert(std::unique_ptr<T> x) {
+        if (tree != nullptr)
+            tree->insert(std::move(x));
+        else
+            tree = new InnerAvlTree<T>(std::move(x));
     }
 
     T &find(const T &info) {
-        return data == nullptr ? throw NotExist() : data->find(info);
+        if(tree == nullptr)
+            throw NotExist();
+        return tree->find(info);
     }
 
-    std::vector<T*> inOrder() {
-        return data == nullptr ? std::vector<T *>() : data->inOrder();
+    std::vector<T *> inOrder() {
+        return tree == nullptr ? std::vector<T *>() : tree->inOrder();
 
     }
 
     void remove(const T &info) {
-        if (data != nullptr)
-            data->remove(info);
+        if (tree != nullptr)
+            tree->remove(info);
     }
 
     void recursiveAvl(const std::vector<T>& vector) {

@@ -32,6 +32,12 @@ public:
     bool operator<(const PlayerLevel& other) const{
         return !(*this > other) && !(*this == other);
     }
+    int getLevel(){
+        return level;
+    }
+    int getId(){
+        return id;
+    }
 };
 
 
