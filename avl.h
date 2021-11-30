@@ -228,9 +228,15 @@ private:
         if (data == info) {
             return this;
         }
-        if (rightSon)
-        InnerAvlTree<T> *leftFind = leftSon->internalFind(info);
-        return leftFind == nullptr ? rightSon->internalFind(info) : leftFind;
+        if (rightSon != nullptr){
+            if(leftSon != nullptr){
+                InnerAvlTree<T> *leftFind = leftSon->internalFind(info);
+                return leftFind == nullptr ? rightSon->internalFind(info) : leftFind;
+            }
+            return rightSon->internalFind(info);
+        }
+        return leftSon == nullptr ? nullptr : leftSon->internalFind(info);
+
     }
 
 
