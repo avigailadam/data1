@@ -8,13 +8,22 @@
 
 
 class PlayerById {
-    Group& group;
+    Group &group;
     int level;
-    const int id;
+    int id;
 public:
     PlayerById(Group &group, int level, int id) : group(group), level(level), id(id) {}
 
-     Group& getGroup() const {
+    void operator=(const PlayerById& other) {
+      this->level = other.level;
+      this->id = other.id;
+      this->group = other.group;
+    }
+
+    PlayerById(const PlayerById& other): group(other.group), level(other.level), id(other.id){
+    }
+
+    Group &getGroup() const {
         return group;
     }
 

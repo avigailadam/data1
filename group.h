@@ -2,6 +2,7 @@
 #define HW1_GROUP_H
 
 #include <vector>
+#include <cassert>
 #include "avl.h"
 #include "PlayerLevel.h"
 
@@ -18,7 +19,7 @@ public:
     Group(int id, AvlTree<PlayerLevel> *playersByLevel) : id(id), playersByLevel(playersByLevel) {}
 
     virtual ~Group() {
-
+        delete this->playersByLevel;
     }
 
     std::vector<PlayerLevel*> getInorderLevel(){
