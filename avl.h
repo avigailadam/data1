@@ -7,7 +7,7 @@
 template<class T>
 class InnerAvlTree {
     T data;
-    InnerAvlTree<T> *max;
+    InnerAvlTree<T>* max;
     int height;
     int size;
     InnerAvlTree<T> *father;
@@ -47,7 +47,7 @@ public:
         father = nullptr;
         rightSon = nullptr;
         leftSon = nullptr;
-        max = nullptr;
+        max = this;
         height = 1;
         size = 1;
     }
@@ -57,9 +57,14 @@ public:
         father = nullptr;
         rightSon = nullptr;
         leftSon = nullptr;
-        max = nullptr;
+        max = this;
         height = 1;
         size = 1;
+    }
+
+    ~InnerAvlTree(){
+        delete rightSon;
+        delete leftSon;
     }
 
     void setData(T *data) {
@@ -101,6 +106,7 @@ public:
             leftHeight = leftSon->height;
         }
         height = leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
+        //todo set max
     }
 
     InnerAvlTree(T *data, InnerAvlTree<T> *best_player, InnerAvlTree<T> *rightSon, InnerAvlTree<T> *leftSon,
@@ -114,8 +120,6 @@ public:
         size = 1;
     }
 
-    virtual ~InnerAvlTree() = default;
-
     void setMax() {
         InnerAvlTree<T> *current = this;
         while (current->rightSon != nullptr) {
@@ -124,7 +128,7 @@ public:
         max = current;
     }
 
-    InnerAvlTree<T> *getMax() {
+    InnerAvlTree<T> *getMax() const {
         return max;
     }
 
@@ -251,6 +255,7 @@ public:
 //            TODO: balance();
 //            TODO: updateHeights();
 //            TODO: updateSize();
+
     }
 
     void insert(std::unique_ptr<T> x) {
@@ -323,10 +328,6 @@ public:
 
 
     }
-
-
-
-
 };
 
 template<class T>
@@ -377,6 +378,7 @@ public:
             return;
         tree = new InnerAvlTree<T>(vector);
     }
+
 };
 
 #endif

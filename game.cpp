@@ -9,7 +9,7 @@ void Game::AddPlayer(int playerID, int groupID, int level) {
     if (level < 0 || groupID <= 0 || playerID <= 0)
         throw InvalidInput();
     PlayerLevel playerByLevel(level, playerID);
-    Group& group = groupTree.find(Group(groupID));
+    Group &group = groupTree.find(Group(groupID));
     group.addPlayer(playerByLevel);
     PlayerById playerById(group, level, playerID);
     playersTree.insert(playerById);

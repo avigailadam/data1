@@ -19,7 +19,7 @@ public:
     void IncreaseLevel(int playerID, int levelIncrease);
     int getHighestLevel(int groupID);
     std::vector<int> GetAllPlayersByLevel(int groupID);
-    std::vector<PlayerById> getGroupsHighestLevel(int numOfGroups);
+    std::vector<int> getGroupsHighestLevel(int numOfGroups);
 };
 
 
