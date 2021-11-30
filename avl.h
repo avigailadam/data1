@@ -77,16 +77,6 @@ public:
         setMax();
     }
 
-    InnerAvlTree(T *data, InnerAvlTree<T> *best_player, InnerAvlTree<T> *rightSon, InnerAvlTree<T> *leftSon,
-                 InnerAvlTree<T> *father) :
-            data(data),
-            max(best_player),
-            rightSon(rightSon),
-            leftSon(leftSon),
-            father(father) {
-        height = 0;
-    }
-
     void setMax() {
         InnerAvlTree<T> *current = this;
         while (current->rightSon != nullptr) {
@@ -193,9 +183,7 @@ private:
             return rightSon->internalFind(info);
         }
         return leftSon == nullptr ? nullptr : leftSon->internalFind(info);
-
     }
-
 
 public:
 
@@ -249,63 +237,10 @@ public:
         return vec;
     }
 
-
-//    InnerAvlTree<T> *remove(const T &info) {
-//        InnerAvlTree<T> *toRemove = internalFind(info);
-//        InnerAvlTree<T> *res = this;
-//        if (toRemove == nullptr)
-//            throw NotExist();
-//        InnerAvlTree<T> *currLeft = toRemove->leftSon;
-//        InnerAvlTree<T> *currRight = toRemove->rightSon;
-//        InnerAvlTree<T> *currFather = toRemove->father;
-//        if (currLeft != nullptr && currRight != nullptr) {
-//            InnerAvlTree<T> *current = toRemove->rightSon;
-//            while (current->leftSon != nullptr) {
-//                current = current->leftSon;
-//            }
-//            if (current->father != toRemove) {
-//                switchNodes(current, toRemove);
-//                currLeft = toRemove->leftSon;
-//            } else {
-//                current->father = nullptr;
-//                toRemove->father = current;
-//                toRemove->rightSon = current->rightSon;
-//            }
-//            currFather = toRemove->father;
-//            currRight = toRemove->rightSon;
-//        }
-//        if (currLeft == nullptr && currRight == nullptr) {
-//            if (currFather != nullptr)
-//                *(currFather->rightSon == toRemove ? &currFather->rightSon : &currFather->leftSon) = nullptr;
-//            else {
-//                assert(height == 1);
-//                res = nullptr;
-//            }
-//        } else if (currLeft == nullptr || currRight == nullptr) {
-//            InnerAvlTree<T> *put = currLeft == nullptr ? currRight : currLeft;
-//            if (currFather != nullptr) {
-//                (currFather->leftSon == toRemove ? currFather->leftSon : currFather->rightSon) = put;
-//                put->father = currFather;
-//                *(currFather->rightSon == toRemove ? &currFather->rightSon : &currFather->leftSon) = nullptr;
-//            } else {
-//                if (currRight == nullptr) {
-//                    currLeft->father = nullptr;
-//                    res = currLeft;
-//                } else {
-//                    currRight->father = nullptr;
-//                    res = currRight;
-//                }
-//            }
-//        }
-//        delete toRemove;
-//        setMax();
-//        return res;
-//    }
-
-      InnerAvlTree<T>* remove(const T& info) {
+    InnerAvlTree<T> *remove(const T &info) {
         if (data == info) {
             auto next = rightSon;
-            if (next == nullptr){
+            if (next == nullptr) {
                 auto result = leftSon;
                 leftSon = nullptr;
                 return result;
@@ -315,7 +250,7 @@ public:
             if (next != rightSon) {
                 if (next->rightSon != nullptr) {
                     next->rightSon->father = next->father;
-                    next->father->leftSon=next->rightSon;
+                    next->father->leftSon = next->rightSon;
                 }
                 next->rightSon == rightSon;
             }
