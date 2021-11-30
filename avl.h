@@ -218,7 +218,7 @@ public:
         setMax();
     }
 
-    void insert(std::unique_ptr<T> x) {
+    void insert_unique(std::unique_ptr<T> x) {
         InnerAvlTree<T> *current = this;
         InnerAvlTree<T> *leaf = new InnerAvlTree<T>(std::move(x));
         do {
@@ -382,9 +382,9 @@ public:
     }
 
 
-    void insert(std::unique_ptr<T> x) {
+    void insert_unique(std::unique_ptr<T> x) {
         if (tree != nullptr)
-            tree->insert(std::move(x));
+            tree->insert_unique(std::move(x));
         else
             tree = new InnerAvlTree<T>(std::move(x));
     }

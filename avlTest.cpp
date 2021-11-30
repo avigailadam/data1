@@ -89,7 +89,7 @@ int main() {
     std::unique_ptr<BoxToGal> sp(new BoxToGal(1));
     box.insert(b1);
     box.insert(b2);
-    box.insert(std::move(sp));
+    box.insert_unique(std::move(sp));
     box.remove(b1);
 
 

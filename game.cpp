@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 
 void Game::AddGroup(int groupID) {
-    groupTree.insert(std::unique_ptr<Group>(new Group(groupID)));
+    groupTree.insert_unique(std::unique_ptr<Group>(new Group(groupID)));
 }
 
 void Game::AddPlayer(int playerID, int groupID, int level) {
@@ -37,7 +37,7 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     newGroupLevels.recursiveAvl(merged);
     groupTree.remove(srcGroup);
     groupTree.remove(repGroup);
-    groupTree.insert(std::unique_ptr<Group>(new Group(replacementID, &newGroupLevels)));
+    groupTree.insert_unique(std::unique_ptr<Group>(new Group(replacementID, &newGroupLevels)));
 }
 
 void Game::IncreaseLevel(int playerID, int levelIncrease) {
