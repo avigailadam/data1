@@ -316,10 +316,12 @@ public:
                 current = current->leftSon;
             }
             switchNodes(current, toRemove);
+            curr_father = toRemove->father;
             left = toRemove->leftSon;
             right = toRemove->rightSon;
         }
         if (left == nullptr && right == nullptr) {
+            //update size
             delete toRemove;
             setMax();
             return;
