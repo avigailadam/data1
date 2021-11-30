@@ -5,40 +5,29 @@
 #include <vector>
 
 template<class T>
+std::vector<T> sliceVec(std::vector<T> vector, int start, int end) {
+    typename std::vector<T>::const_iterator first = vector.begin() + start;
+    typename std::vector<T>::const_iterator last = vector.begin() + end + 1;
+    std::vector<T> newVec(first, last);
+    return newVec;
+}
+
+
+template<class T>
 class InnerAvlTree {
     T data;
-    InnerAvlTree<T>* max;
+    InnerAvlTree<T> *max;
     int height;
-    int size;
     InnerAvlTree<T> *father;
     InnerAvlTree<T> *rightSon;
     InnerAvlTree<T> *leftSon;
 
 
-    void inOrderAux(InnerAvlTree<T> *root, std::vector<T*> &vec) {
+    void inOrderAux(InnerAvlTree<T> *root, std::vector<T *> &vec) {
         if (root == nullptr) return;
         inOrderAux(root->leftSon, vec);
         vec.push_back(&(root->data));
         inOrderAux(root->rightSon, vec);
-    }
-
-    static std::vector<T> sliceVec(std::vector<T> vector, int start, int end) {
-        typename std::vector<T>::const_iterator first = vector.begin() + start;
-        typename std::vector<T>::const_iterator last = vector.begin() + end + 1;
-        std::vector<T> newVec(first, last);
-        return std::vector<T>();
-    }
-
-    static void switchNodes(InnerAvlTree<T> *node1, InnerAvlTree<T> *node2) {
-        InnerAvlTree<T> *tmp = node1->father;
-        node1->father = node2->father;
-        node2->father = tmp;
-        tmp = node1->rightSon;
-        node1->rightSon = node2->rightSon;
-        node2->rightSon = tmp;
-        tmp = node1->leftSon;
-        node1->leftSon = node2->leftSon;
-        node2->leftSon = tmp;
     }
 
 public:
@@ -49,7 +38,6 @@ public:
         leftSon = nullptr;
         max = this;
         height = 1;
-        size = 1;
     }
 
 
@@ -59,43 +47,22 @@ public:
         leftSon = nullptr;
         max = this;
         height = 1;
-        size = 1;
     }
 
-    ~InnerAvlTree(){
+    ~InnerAvlTree() {
         delete rightSon;
         delete leftSon;
     }
 
-    void setData(T *data) {
-        this->data = data;
-    }
-
-    void setSize(int size) {
-        this->size = size;
-    }
-
-    void setFather(InnerAvlTree<T> *father) {
-        this->father = father;
-    }
-
-    void setRightSon(InnerAvlTree<T> *rightSon) {
-        this->rightSon = rightSon;
-    }
-
-    void setLeftSon(InnerAvlTree<T> *leftSon) {
-        this->leftSon = leftSon;
-    }
-
-    explicit InnerAvlTree(const std::vector<T>& vector): data(vector[vector.size() / 2]), size(vector.size()), height(0), father(nullptr){
-        int sizeVec = vector.size();
-        if (sizeVec <= 0) {
+    explicit InnerAvlTree(const std::vector<T> &vector) : data(vector[vector.size() / 2]), height(0), father(nullptr) {
+        int size = vector.size();
+        if (size <= 0) {
             return;
         }
         std::vector<T> rightVec = sliceVec(vector, (size / 2) + 1, size - 1);
-        rightSon = rightVec.empty()? nullptr :new InnerAvlTree<T>(rightVec);
+        rightSon = rightVec.empty() ? nullptr : new InnerAvlTree<T>(rightVec);
         std::vector<T> leftVec = sliceVec(vector, 0, (size / 2) - 1);
-        leftSon = leftVec.empty()? nullptr: new InnerAvlTree<T>(leftVec);
+        leftSon = leftVec.empty() ? nullptr : new InnerAvlTree<T>(leftVec);
         int leftHeight = 0, rightHeight = 0;
         if (rightSon != nullptr) {
             rightSon->father = this;
@@ -106,7 +73,8 @@ public:
             leftHeight = leftSon->height;
         }
         height = leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
-        //todo set max
+        //todo assert balance factor
+        setMax();
     }
 
     InnerAvlTree(T *data, InnerAvlTree<T> *best_player, InnerAvlTree<T> *rightSon, InnerAvlTree<T> *leftSon,
@@ -117,7 +85,6 @@ public:
             leftSon(leftSon),
             father(father) {
         height = 0;
-        size = 1;
     }
 
     void setMax() {
@@ -129,6 +96,7 @@ public:
     }
 
     InnerAvlTree<T> *getMax() const {
+        assert(max != nullptr);
         return max;
     }
 
@@ -148,14 +116,6 @@ public:
             height = 1 + rightSon->height;
         }
     }
-
-    int getSize() const {
-        return size;
-    }
-//
-//        void updateSize() {
-//
-//        }
 
     int BF() {
         return leftSon->getHeight() - rightSon->getHeight();
@@ -222,14 +182,11 @@ private:
 //        }
 
     InnerAvlTree<T> *internalFind(const T &info) {
-        if (size == 0) {
-            return nullptr;
-        }
         if (data == info) {
             return this;
         }
-        if (rightSon != nullptr){
-            if(leftSon != nullptr){
+        if (rightSon != nullptr) {
+            if (leftSon != nullptr) {
                 InnerAvlTree<T> *leftFind = leftSon->internalFind(info);
                 return leftFind == nullptr ? rightSon->internalFind(info) : leftFind;
             }
@@ -243,34 +200,27 @@ private:
 public:
 
     void insert(T x) {
-        InnerAvlTree<T> *current = this;
-        InnerAvlTree<T> *leaf = new InnerAvlTree<T>(x);
-        if (leaf== nullptr) throw AllocationError();
-        leaf->size = 1;
-        do {
-            if (current->data == leaf->data) {
-                delete leaf;
-                throw AlreadyExist();
-            }
-            leaf->father = current;
-            current = (leaf->data) > (current->data) ? current->rightSon : current->leftSon;
-        } while (current != nullptr);
-        if (leaf->data > leaf->father->data)
-            leaf->father->rightSon = leaf;
-        else
-            leaf->father->leftSon = leaf;
+        if (x > data) {
+            if (rightSon == nullptr) {
+                rightSon = new InnerAvlTree<T>(x);
+                rightSon->father = this;
+            } else
+                rightSon->insert(x);
+        } else if (x < data) {
+            if (leftSon == nullptr) {
+                leftSon = new InnerAvlTree<T>(x);
+                leftSon->father = this;
+            } else
+                leftSon->insert(x);
+        } else {
+            throw AlreadyExist();
+        }
         setMax();
-//            TODO: balance();
-//            TODO: updateHeights();
-//            TODO: updateSize();
-
     }
 
     void insert(std::unique_ptr<T> x) {
         InnerAvlTree<T> *current = this;
         InnerAvlTree<T> *leaf = new InnerAvlTree<T>(std::move(x));
-        if (leaf== nullptr) throw AllocationError();
-        leaf->size = 1;
         do {
             if (current->data == leaf->data) {
                 delete leaf;
@@ -284,9 +234,6 @@ public:
         else
             leaf->father->leftSon = leaf;
         setMax();
-//            TODO: balance();
-//            TODO: updateHeights();
-//            TODO: updateSize();
     }
 
     T &find(const T &info) {
@@ -303,41 +250,101 @@ public:
     }
 
 
-    void remove(const T &info) {
-        InnerAvlTree<T> *toRemove = internalFind(info);
-        if (toRemove == nullptr)
-            throw NotExist();
-        InnerAvlTree<T> *left = toRemove->leftSon;
-        InnerAvlTree<T> *right = toRemove->rightSon;
-        InnerAvlTree<T> *curr_father = toRemove->father;
-        if (left != nullptr && right != nullptr) {
-            InnerAvlTree<T> *current = toRemove->rightSon;
-            while (current->leftSon != nullptr) {
-                current = current->leftSon;
+//    InnerAvlTree<T> *remove(const T &info) {
+//        InnerAvlTree<T> *toRemove = internalFind(info);
+//        InnerAvlTree<T> *res = this;
+//        if (toRemove == nullptr)
+//            throw NotExist();
+//        InnerAvlTree<T> *currLeft = toRemove->leftSon;
+//        InnerAvlTree<T> *currRight = toRemove->rightSon;
+//        InnerAvlTree<T> *currFather = toRemove->father;
+//        if (currLeft != nullptr && currRight != nullptr) {
+//            InnerAvlTree<T> *current = toRemove->rightSon;
+//            while (current->leftSon != nullptr) {
+//                current = current->leftSon;
+//            }
+//            if (current->father != toRemove) {
+//                switchNodes(current, toRemove);
+//                currLeft = toRemove->leftSon;
+//            } else {
+//                current->father = nullptr;
+//                toRemove->father = current;
+//                toRemove->rightSon = current->rightSon;
+//            }
+//            currFather = toRemove->father;
+//            currRight = toRemove->rightSon;
+//        }
+//        if (currLeft == nullptr && currRight == nullptr) {
+//            if (currFather != nullptr)
+//                *(currFather->rightSon == toRemove ? &currFather->rightSon : &currFather->leftSon) = nullptr;
+//            else {
+//                assert(height == 1);
+//                res = nullptr;
+//            }
+//        } else if (currLeft == nullptr || currRight == nullptr) {
+//            InnerAvlTree<T> *put = currLeft == nullptr ? currRight : currLeft;
+//            if (currFather != nullptr) {
+//                (currFather->leftSon == toRemove ? currFather->leftSon : currFather->rightSon) = put;
+//                put->father = currFather;
+//                *(currFather->rightSon == toRemove ? &currFather->rightSon : &currFather->leftSon) = nullptr;
+//            } else {
+//                if (currRight == nullptr) {
+//                    currLeft->father = nullptr;
+//                    res = currLeft;
+//                } else {
+//                    currRight->father = nullptr;
+//                    res = currRight;
+//                }
+//            }
+//        }
+//        delete toRemove;
+//        setMax();
+//        return res;
+//    }
+
+      InnerAvlTree<T>* remove(const T& info) {
+        if (data == info) {
+            auto next = rightSon;
+            if (next == nullptr){
+                auto result = leftSon;
+                leftSon = nullptr;
+                return result;
             }
-            switchNodes(current, toRemove);
-            curr_father = toRemove->father;
-            left = toRemove->leftSon;
-            right = toRemove->rightSon;
+            while (next->leftSon != nullptr)
+                next = next->leftSon;
+            if (next != rightSon) {
+                if (next->rightSon != nullptr) {
+                    next->rightSon->father = next->father;
+                    next->father->leftSon=next->rightSon;
+                }
+                next->rightSon == rightSon;
+            }
+            next->leftSon = leftSon;
+            if (leftSon) {
+                leftSon->father = next;
+            }
+            rightSon = nullptr;
+            leftSon = nullptr;
+            next->father = father;
+            return next;
+        } else if (data > info) {
+            if (leftSon == nullptr)
+                throw NotExist();
+            auto newRoot = this->leftSon->remove(info);
+            if (newRoot != leftSon)
+                delete leftSon;
+            leftSon = newRoot;
+            return this;
+        } else {
+            assert (data < info);
+            if (rightSon == nullptr)
+                throw NotExist();
+            auto newRoot = rightSon->remove(info);
+            if (newRoot != rightSon)
+                delete rightSon;
+            rightSon = newRoot;
+            return this;
         }
-        if (left == nullptr && right == nullptr) {
-            //update size
-            delete toRemove;
-            setMax();
-            return;
-        }
-        if (left == nullptr || right == nullptr) {
-            InnerAvlTree<T> *put = left == nullptr ? right : left;
-            (curr_father->leftSon == toRemove ? curr_father->leftSon : curr_father->rightSon) = put;
-            put->father = curr_father;
-            delete toRemove;
-            setMax();
-            return;
-        }
-//            TODO: updateSize();
-//            TODO: balance();
-
-
     }
 };
 
@@ -355,15 +362,16 @@ public:
         delete tree;
     }
 
-    T getMax() const{
+    T getMax() const {
         if (tree == nullptr)
             throw NotExist();
-        InnerAvlTree<T>* maxNode = tree->getMax();
+        InnerAvlTree<T> *maxNode = tree->getMax();
+        assert(maxNode != nullptr);
         return maxNode->getData();
     }
 
-    int getSize() const {
-        return tree != nullptr ? tree->getSize() : 0;
+    bool isEmpty() const {
+        return tree == nullptr;
     }
 
     void insert(T x) {
@@ -382,7 +390,7 @@ public:
     }
 
     T &find(const T &info) {
-        if(tree == nullptr)
+        if (tree == nullptr)
             throw NotExist();
         return tree->find(info);
     }
@@ -393,16 +401,21 @@ public:
     }
 
     void remove(const T &info) {
+        if (tree == nullptr)
+            return;
+        InnerAvlTree<T> *newTree = tree->remove(info);
+        if (newTree != tree)
+            delete tree;
+        tree = newTree;
         if (tree != nullptr)
-            tree->remove(info);
+            tree->setMax();
     }
 
-    void recursiveAvl(const std::vector<T>& vector) {
-        if(vector.empty())
+    void recursiveAvl(const std::vector<T> &vector) {
+        if (vector.empty())
             return;
         tree = new InnerAvlTree<T>(vector);
     }
-
 };
 
 #endif

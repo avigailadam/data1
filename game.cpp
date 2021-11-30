@@ -84,7 +84,7 @@ std::vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
     std::vector<Group *> groups = groupTree.inOrder();
     for (Group *g: groups) {
         assert(g != nullptr);
-        if (g->getPlayersByLevel().getSize() != 0) {
+        if (!(g->getPlayersByLevel().isEmpty())) {
             counter++;
             continue;
         }

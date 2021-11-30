@@ -20,11 +20,7 @@ public:
 //    const char *what() const noexcept override;
 
 };
-class AllocationError : std::exception {
-public:
-//    const char *what() const noexcept override;
 
-};
 class NotEnoughGroups: std::exception {
 public:
 //    const char *what() const noexcept override;
