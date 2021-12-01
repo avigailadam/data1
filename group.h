@@ -1,10 +1,10 @@
 #ifndef HW1_GROUP_H
 #define HW1_GROUP_H
 
+#include "PlayerLevel.h"
 #include <vector>
 #include <cassert>
 #include "avl.h"
-#include "PlayerLevel.h"
 
 class Group {
     int id;
@@ -47,6 +47,10 @@ public:
 
     bool operator<(const Group &other) const {
         return id < other.id;
+    }
+
+    bool operator!=(const Group &other) const {
+        return id != other.id;
     }
 
     const AvlTree<PlayerLevel> &getPlayersByLevel() const {

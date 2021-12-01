@@ -188,6 +188,8 @@ private:
 public:
 
     void insert(T x) {
+        if (x == data)
+            throw AlreadyExist();
         if (x > data) {
             if (rightSon == nullptr) {
                 rightSon = new InnerAvlTree<T>(x);
@@ -200,8 +202,6 @@ public:
                 leftSon->father = this;
             } else
                 leftSon->insert(x);
-        } else {
-            throw AlreadyExist();
         }
         setMax();
     }
@@ -250,9 +250,9 @@ public:
             if (next != rightSon) {
                 if (next->rightSon != nullptr) {
                     next->rightSon->father = next->father;
-                    next->father->leftSon = next->rightSon;
                 }
-                next->rightSon == rightSon;
+                next->father->leftSon = next->rightSon;
+                next->rightSon = rightSon;
             }
             next->leftSon = leftSon;
             if (leftSon) {
@@ -310,9 +310,15 @@ public:
     }
 
     void insert(T x) {
-        if (tree != nullptr)
-            tree->insert(x);
-        else
+        if (tree != nullptr) {
+            try {
+                tree->find(x);
+                throw AlreadyExist();
+            } catch (NotExist &y) {
+                tree->insert(x);
+                return;
+            }
+        } else
             tree = new InnerAvlTree<T>(x);
     }
 

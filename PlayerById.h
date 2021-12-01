@@ -43,6 +43,10 @@ public:
         return id == other.id;
     }
 
+    bool operator!=(const PlayerById &other) const {
+        return id != other.id;
+    }
+
     bool operator<(const PlayerById &other) const {
         return id < other.id;
     }

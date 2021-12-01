@@ -4,6 +4,7 @@
 #include "avl.h"
 
 using std::string;
+using std::vector;
 
 class BoxToGal{
     int x;
@@ -20,7 +21,14 @@ public:
         return x < other.x;
     }
 };
-
+template <class T>
+vector<T> makeActual(vector<T *> origin) {
+    vector<T> res;
+    for (T *i: origin) {
+        res.push_back(*i);
+    }
+    return res;
+}
 int main() {
     AvlTree<string> t1;
     assert(t1.inOrder().size() == 0);
@@ -92,5 +100,21 @@ int main() {
     box.insert_unique(std::move(sp));
     box.remove(b1);
 
-
+    AvlTree<string> foo;
+    foo.insert("1");
+    foo.insert("3");
+    foo.insert("2");
+    foo.insert("4");
+    foo.insert("5");
+    auto actualFoo = makeActual(foo.inOrder());
+    vector<string> expectedFoo = {"1", "2", "3", "4", "5"};
+    assert(actualFoo == expectedFoo);
+    foo.remove("3");
+    actualFoo = makeActual(foo.inOrder());
+    expectedFoo = {"1", "2", "4", "5"};
+    assert(actualFoo == expectedFoo);
+    foo.remove("1");
+    actualFoo = makeActual(foo.inOrder());
+    expectedFoo = {"2", "4", "5"};
+    assert(actualFoo == expectedFoo);
 };
