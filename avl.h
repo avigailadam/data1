@@ -75,7 +75,8 @@ public:
             leftSon->father = this;
             leftHeight = leftSon->height;
         }
-        height = leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
+        setHeight();
+//        height = leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
         balance();
         //todo assert balance factor
         setMax();
@@ -106,7 +107,6 @@ public:
     void setHeight() {
 
         int leftHeight = leftSon == nullptr ? -1 : leftSon->height;
-
         int rightHeight = rightSon == nullptr ? -1 : rightSon->height;
         if (leftHeight - rightHeight > 0) {
             height = 1 + leftHeight;
