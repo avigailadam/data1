@@ -1,6 +1,7 @@
 #include "game.h"
 #include "avl.h"
 
+
 void Game::AddGroup(int groupID) {
     groupTree.insert_unique(std::unique_ptr<Group>(new Group(groupID)));
 }

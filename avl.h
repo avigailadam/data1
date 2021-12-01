@@ -3,10 +3,11 @@
 
 #include "exceptions.h"
 #include <vector>
+#include <cassert>
 
 template<class T>
 std::vector<T> sliceVec(std::vector<T> vector, int start, int end) {
-    if(end== -1)
+    if (end == -1)
         return {};
     typename std::vector<T>::const_iterator first = vector.begin() + start;
     typename std::vector<T>::const_iterator last = vector.begin() + end + 1;
@@ -136,7 +137,11 @@ private:
         rightSon = temp;
         setHeight();
         RightSon->setHeight();
-        this = RightSon;
+        leftSon = RightSon->leftSon;
+        father = RightSon->father;
+        data = RightSon->data;
+        height = RightSon->height;
+        max = RightSon->max;
     }
 
     void Right_rotate() {
@@ -149,29 +154,31 @@ private:
         leftSon = temp;
         setHeight();
         LeftSon->setHeight();
-        this = LeftSon;
+        leftSon = LeftSon->leftSon;
+        father = LeftSon->father;
+        data = LeftSon->data;
+        height = LeftSon->height;
+        max = LeftSon->max;
 
     }
 
     void balance() {
         const int balanceFactor = BalanceFactor();
         if (balanceFactor > 1) {
-            if(leftSon->BalanceFactor()>=0){
+            if (leftSon->BalanceFactor() >= 0) {
                 Right_rotate();
                 return;
-            }
-            else{
+            } else {
                 leftSon->Left_rotate();
                 Right_rotate();
                 return;
             }
         }
         if (balanceFactor < -1) {
-            if(rightSon->BalanceFactor()<=0){
+            if (rightSon->BalanceFactor() <= 0) {
                 Left_rotate();
                 return;
-            }
-            else{
+            } else {
                 rightSon->Right_rotate();
                 Left_rotate();
                 return;
@@ -217,22 +224,41 @@ public:
     }
 
     void insert_unique(std::unique_ptr<T> x) {
-        InnerAvlTree<T> *current = this;
-        InnerAvlTree<T> *leaf = new InnerAvlTree<T>(std::move(x));
-        do {
-            if (current->data == leaf->data) {
-                delete leaf;
-                throw AlreadyExist();
-            }
-            leaf->father = current;
-            current = (leaf->data) > (current->data) ? current->rightSon : current->leftSon;
-        } while (current != nullptr);
-        if (leaf->data > leaf->father->data)
-            leaf->father->rightSon = leaf;
-        else
-            leaf->father->leftSon = leaf;
+        if (x == data)
+            throw AlreadyExist();
+        if (x > data) {
+            if (rightSon == nullptr) {
+                rightSon = new InnerAvlTree<T>(std::move(x));
+                rightSon->father = this;
+            } else
+                rightSon->insert(std::move(x));
+        } else if (x < data) {
+            if (leftSon == nullptr) {
+                leftSon = new InnerAvlTree<T>(std::move(x));
+                leftSon->father = this;
+            } else
+                leftSon->insert(std::move(x));
+        }
+        balance();
         setMax();
     }
+//    void insert_unique(std::unique_ptr<T> x) {
+//        InnerAvlTree<T> *current = this;
+//        InnerAvlTree<T> *leaf = new InnerAvlTree<T>(std::move(x));
+//        do {
+//            if (current->data == leaf->data) {
+//                delete leaf;
+//                throw AlreadyExist();
+//            }
+//            leaf->father = current;
+//            current = (leaf->data) > (current->data) ? current->rightSon : current->leftSon;
+//        } while (current != nullptr);
+//        if (leaf->data > leaf->father->data)
+//            leaf->father->rightSon = leaf;
+//        else
+//            leaf->father->leftSon = leaf;
+//        setMax();
+//    }
 
     T &find(const T &info) {
         InnerAvlTree<T> *result = internalFind(info);
@@ -253,6 +279,7 @@ public:
             if (next == nullptr) {
                 auto result = leftSon;
                 leftSon = nullptr;
+                balance();
                 return result;
             }
             while (next->leftSon != nullptr)
@@ -271,6 +298,7 @@ public:
             rightSon = nullptr;
             leftSon = nullptr;
             next->father = father;
+            balance();
             return next;
         } else if (data > info) {
             if (leftSon == nullptr)
@@ -279,6 +307,7 @@ public:
             if (newRoot != leftSon)
                 delete leftSon;
             leftSon = newRoot;
+            balance();
             return this;
         } else {
             assert (data < info);
@@ -288,6 +317,7 @@ public:
             if (newRoot != rightSon)
                 delete rightSon;
             rightSon = newRoot;
+            balance();
             return this;
         }
     }
