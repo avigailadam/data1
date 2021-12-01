@@ -99,6 +99,17 @@ public:
         return height;
     }
 
+    bool exists(const T &info) const {
+        if (info == data)
+            return true;
+        if (info < data) {
+            return leftSon != nullptr && leftSon->exists(info);
+        } else {
+            assert(info > data);
+            return rightSon != nullptr && rightSon->exists(info);
+        }
+    }
+
     void setHeight() {
         if (leftSon->height - rightSon->height > 0) {
             height = 1 + leftSon->height;
@@ -175,15 +186,16 @@ private:
         if (data == info) {
             return this;
         }
-        if (rightSon != nullptr) {
-            if (leftSon != nullptr) {
-                InnerAvlTree<T> *leftFind = leftSon->internalFind(info);
-                return leftFind == nullptr ? rightSon->internalFind(info) : leftFind;
+        if (info > data) {
+            if (rightSon != nullptr) {
+                return rightSon->internalFind(info);
             }
-            return rightSon->internalFind(info);
+            return nullptr;
         }
+        assert(info < data);
         return leftSon == nullptr ? nullptr : leftSon->internalFind(info);
     }
+
 
 public:
 
@@ -311,13 +323,10 @@ public:
 
     void insert(T x) {
         if (tree != nullptr) {
-            try {
-                tree->find(x);
+            // TODO explain why we need this extra check here?
+            if (tree->exists(x))
                 throw AlreadyExist();
-            } catch (NotExist &y) {
-                tree->insert(x);
-                return;
-            }
+            tree->insert(x);
         } else
             tree = new InnerAvlTree<T>(x);
     }
