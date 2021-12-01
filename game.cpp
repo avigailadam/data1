@@ -23,21 +23,19 @@ void Game::RemovePlayer(int PlayerID) {
     PlayerLevel temp(playerById.getLevel(), playerById.getId());
     PlayerLevel playerByLevel = levelsTree.find(temp);
     group.removePlayer(playerByLevel);
-    levelsTree.remove(playerByLevel);
     playersTree.remove(playerById);
+    levelsTree.remove(playerByLevel);
 }
 
 void Game::ReplaceGroup(int groupID, int replacementID) {
     Group groupTmp(groupID);
     const Group &srcGroup = groupTree.find(groupTmp);
-    groupTmp = Group(replacementID);
-    Group &repGroup = groupTree.find(groupTmp);
+    Group groupTmp2(replacementID);
+    Group &repGroup = groupTree.find(groupTmp2);
     std::vector<PlayerLevel> merged = merge(srcGroup.getInorderLevel(), repGroup.getInorderLevel());
-    AvlTree<PlayerLevel> newGroupLevels;
-    newGroupLevels.recursiveAvl(merged);
     groupTree.remove(srcGroup);
     groupTree.remove(repGroup);
-    groupTree.insert_unique(std::unique_ptr<Group>(new Group(replacementID, &newGroupLevels)));
+    groupTree.insert_unique(std::unique_ptr<Group>(new Group(replacementID, merged)));
 }
 
 void Game::IncreaseLevel(int playerID, int levelIncrease) {
@@ -51,18 +49,18 @@ void Game::IncreaseLevel(int playerID, int levelIncrease) {
 int Game::getHighestLevel(int groupID) {
     if (groupID < 0) {
         PlayerLevel player = levelsTree.getMax();
-        return player.getLevel();
+        return player.getId();
     }
     Group &group = groupTree.find(groupID);
     PlayerLevel groupPlayer = group.getMax();
-    return groupPlayer.getLevel();
+    return groupPlayer.getId();
 }
 
 std::vector<int> Game::GetAllPlayersByLevel(int groupID) {
     if (groupID < 0) {
         std::vector<PlayerLevel *> vec = levelsTree.inOrder();
         std::vector<int> res = {};
-        for (PlayerLevel* i : vec) {
+        for (PlayerLevel *i : vec) {
             res.push_back(i->getId());
         }
         return res;

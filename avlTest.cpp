@@ -42,6 +42,7 @@ int main() {
     assert(actual == expect);
     t1.insert("mama");
     t1.insert("aba");
+    assert(t1.validateHeight());
     expect = std::vector<string>();
     expect.push_back("aba");
     expect.push_back("hi");
@@ -53,10 +54,10 @@ int main() {
     assert(actual == expect);
     assert(t1.getMax() == "mama");
     t1.remove("mama");
+    assert(t1.validateHeight());
     actual = std::vector<string>();
     for (auto s : t1.inOrder()) {
         actual.push_back(*s);
-        std::cout << *s << std::endl;
     }
     expect = std::vector<string>();
     expect.push_back("aba");
@@ -70,10 +71,10 @@ int main() {
     }
     AvlTree<int> recTree;
     recTree.recursiveAvl(toTree);
+    assert(recTree.validateHeight());
     std::vector<int> actualInt;
     for (auto s : recTree.inOrder()) {
         actualInt.push_back(*s);
-        std::cout << *s << std::endl;
     }
     assert(actualInt == toTree);
     assert(recTree.getMax() == 9);

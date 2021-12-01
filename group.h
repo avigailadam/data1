@@ -15,7 +15,11 @@ public:
 //    Group clone() {
 //        return Group(id, playersByLevel)
 //    }
-    Group(int id) : id(id) {}
+    Group(int id) : id(id), playersByLevel(new AvlTree<PlayerLevel>()) {}
+
+    Group(int id, std::vector<PlayerLevel> vec):id(id),playersByLevel(new AvlTree<PlayerLevel>()){
+        playersByLevel->recursiveAvl(vec);
+    }
 
     Group(std::unique_ptr<Group> other) : id(other->id) {
         assert(other.get() != nullptr);
