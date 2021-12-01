@@ -6,6 +6,8 @@
 
 template<class T>
 std::vector<T> sliceVec(std::vector<T> vector, int start, int end) {
+    if(end== -1)
+        return {};
     typename std::vector<T>::const_iterator first = vector.begin() + start;
     typename std::vector<T>::const_iterator last = vector.begin() + end + 1;
     std::vector<T> newVec(first, last);
@@ -73,6 +75,7 @@ public:
             leftHeight = leftSon->height;
         }
         height = leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
+        balance();
         //todo assert balance factor
         setMax();
     }
@@ -118,69 +121,63 @@ public:
         }
     }
 
-    int BF() {
+    int BalanceFactor() {
         return leftSon->getHeight() - rightSon->getHeight();
     }
 
 private:
-    void roll_LL() {
-        InnerAvlTree<T> *parent = this;
-        InnerAvlTree<T> *left_son = parent->leftSon;
-        parent->leftSon = left_son->rightSon;
-        parent->leftSon->father = parent;
-        left_son->rightSon = parent;
-        left_son->father = parent->father;
-        parent->father = left_son;
-        this = left_son;
-        parent->height--;
+    void Left_rotate() {
+        InnerAvlTree<T> *RightSon = rightSon;
+        RightSon->father = father;
+        InnerAvlTree<T> *temp = RightSon->leftSon;
+        temp->father = this;
+        father = RightSon;
+        RightSon->leftSon = this;
+        rightSon = temp;
+        setHeight();
+        RightSon->setHeight();
+        this = RightSon;
     }
 
-    void roll_LR() {
-        InnerAvlTree<T> *current = this;
-        InnerAvlTree<T> *left_son = current->leftSon;
-        InnerAvlTree<T> *right_grandson = current->leftSon;
+    void Right_rotate() {
+        InnerAvlTree<T> *LeftSon = leftSon;
+        LeftSon->father = father;
+        InnerAvlTree<T> *temp = LeftSon->rightSon;
+        temp->father = this;
+        father = LeftSon;
+        LeftSon->rightSon = this;
+        leftSon = temp;
+        setHeight();
+        LeftSon->setHeight();
+        this = LeftSon;
 
     }
 
-    void roll_RR() {
-        InnerAvlTree<T> *parent = this;
-        InnerAvlTree<T> *right_son = parent->rightSon;
-        parent->rightSon = right_son->leftSon;
-        parent->rightSon->father = parent;
-        right_son->leftSon = parent;
-        right_son->father = parent->father;
-        parent->father = right_son;
-        this = right_son;
-        parent->height--;
+    void balance() {
+        const int balanceFactor = BalanceFactor();
+        if (balanceFactor > 1) {
+            if(leftSon->BalanceFactor()>=0){
+                Right_rotate();
+                return;
+            }
+            else{
+                leftSon->Left_rotate();
+                Right_rotate();
+                return;
+            }
+        }
+        if (balanceFactor < -1) {
+            if(rightSon->BalanceFactor()<=0){
+                Left_rotate();
+                return;
+            }
+            else{
+                rightSon->Right_rotate();
+                Left_rotate();
+                return;
+            }
+        }
     }
-//
-//        void roll_RL() {
-//
-//        }
-
-//        void balance() {
-//            const int bf = BF();
-//            switch (bf) {
-//                case 2:
-//                    if (leftSon->BF() >= 0)
-//                        //            TODO: roll_LL();
-//                    if (leftSon->BF() == -1)
-//                        //            TODO: roll_LR();
-//                    break;
-//                case -2:
-//                    if (leftSon->BF() <= 0)
-//                        //            TODO: roll_RR();
-//                    if (leftSon->BF() == 1)
-//                        //            TODO: roll_RL();
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-
-//        void updateHeights() {
-//
-//        }
 
     InnerAvlTree<T> *internalFind(const T &info) {
         if (data == info) {
@@ -215,6 +212,7 @@ public:
             } else
                 leftSon->insert(x);
         }
+        balance();
         setMax();
     }
 
