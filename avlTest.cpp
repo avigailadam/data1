@@ -35,7 +35,7 @@ int main() {
     t1.insert("hi");
     std::vector<string> expect;
     expect.push_back("hi");
-    std::vector<string> actual;
+        std::vector<string> actual;
     for (auto s : t1.inOrder()) {
         actual.push_back(*s);
     }
