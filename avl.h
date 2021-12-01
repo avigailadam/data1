@@ -68,7 +68,7 @@ public:
         int rightHeight = rightSon == nullptr ? -1 : rightSon->height;
         std::vector<T> leftVec = sliceVec(vector, 0, (size / 2) - 1);
         leftSon = leftVec.empty() ? nullptr : new InnerAvlTree<T>(leftVec);
-        int leftHeight = leftSon == nullptr ? -1 : leftSon -> height;
+        int leftHeight = leftSon == nullptr ? -1 : leftSon->height;
         height = std::max(leftHeight, rightHeight) + 1;
         if (rightSon != nullptr) {
             rightSon->father = this;
@@ -299,13 +299,15 @@ public:
             return this;
         }
     }
+
 private:
     int calcHeight() const {
-        int leftHeight = leftSon == nullptr ? -1 : leftSon -> calcHeight();
-        int rightHeight = rightSon == nullptr ? -1 : rightSon -> calcHeight();
+        int leftHeight = leftSon == nullptr ? -1 : leftSon->calcHeight();
+        int rightHeight = rightSon == nullptr ? -1 : rightSon->calcHeight();
         return std::max(leftHeight, rightHeight) + 1;
 
     }
+
 public:
     bool validate_height() const {
         if (leftSon == nullptr && rightSon == nullptr) {
@@ -321,6 +323,17 @@ public:
         int rightHeight = rightSon->calcHeight() + 1;
         int realHeight = leftHeight < rightHeight ? rightHeight : leftHeight;
         return realHeight == height && rightSon->validate_height() && leftSon->validate_height();
+    }
+
+    void getNLowest(int n, std::vector<T> *vec) {
+        if (n == 0)
+            return;
+        if (leftSon != nullptr)
+            leftSon->getNLowest(n, vec);
+        vec->push_back(data);
+        n--;
+        if (rightSon != nullptr)
+            rightSon->getNLowest(n, vec);
     }
 };
 
@@ -395,6 +408,13 @@ public:
 
     bool validateHeight() {
         return tree == nullptr ? true : tree->validate_height();
+    }
+
+    std::vector<T> getNLowest(int n) {
+        std::vector<T> vec;
+        if (tree != nullptr)
+            tree->getNLowest(n, &vec);
+        return vec;
     }
 };
 
