@@ -61,6 +61,9 @@ int main() {
     best3 = g1.getGroupsHighestLevel(3);
     assert(best3 == expect);
     g1.ReplaceGroup(15, 4);
+    vector<int> all = g1.GetAllPlayersByLevel(4);
+    expect = {5, 9, 12, 13, 1, 4, 10,3, 2};//error, show just original 4
+    assert(all == expect);
 
 
 }
