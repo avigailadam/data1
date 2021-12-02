@@ -2,8 +2,8 @@
 // Created by avi on 28/11/2021.
 //
 
-#ifndef HW1_LIBRARY_H
-#define HW1_LIBRARY_H
+#ifndef HW1_LIBRARY1_H
+#define HW1_LIBRARY1_H
 
 /****************************************************************************/
 /*                                                                          */
@@ -62,4 +62,4 @@ void Quit(void** DS);
 #endif    /*_234218_WET1 */
 
 
-#endif //HW1_LIBRARY_H
+#endif //HW1_LIBRARY1_H
