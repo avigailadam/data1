@@ -51,6 +51,10 @@ public:
         return id < other.id;
     }
 
+    void setGroup(Group &newGroup) {
+        group = newGroup;
+    }
+
 };
 
 #endif //HW1_PLAYER_BY_ID_H

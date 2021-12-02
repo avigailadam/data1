@@ -8,8 +8,8 @@
 
 template<class T>
 std::vector<T> sliceVec(std::vector<T> vector, int start, int end) {
-    if (end == -1)
-        return {};
+    if (end == -1 || end < start)
+        return std::vector<T>();
     typename std::vector<T>::const_iterator first = vector.begin() + start;
     typename std::vector<T>::const_iterator last = vector.begin() + end + 1;
     std::vector<T> newVec(first, last);

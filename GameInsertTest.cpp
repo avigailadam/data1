@@ -64,4 +64,12 @@ int main() {
     vector<int> all = g1.GetAllPlayersByLevel(4);
     expect = {3,2,4,1, 5};//error, show just original 4
     assert(all == expect);
+    g1.AddGroup(15);
+    g1.AddPlayer(20,15,1);
+    g1.AddGroup(30);
+    g1.AddPlayer(21,30,2);
+    g1.ReplaceGroup(30,15);
+    expect = {20, 21};
+    all = g1.GetAllPlayersByLevel(15);
+    assert(expect == all);
 }

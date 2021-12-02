@@ -70,8 +70,10 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     groupTree.remove(repGroup);
     bestPlayersPerGroup.remove(repBest);
     groupTree.insert_unique(std::unique_ptr<Group>(new Group(replacementID, merged)));
+    Group& newGroup = groupTree.find(Group(replacementID));
     BestPlayerByGroup newBest(groupTree.find(groupTmp2).getPlayersByLevel().getMax().getId(), replacementID);
     bestPlayersPerGroup.insert(newBest);
+    //todo change group ref for origin group's players
 }
 
 void Game::IncreaseLevel(int playerID, int levelIncrease) {
