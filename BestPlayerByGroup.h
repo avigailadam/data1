@@ -1,7 +1,7 @@
 #ifndef HW1_BESTPLAYERBYGROUP_H
 #define HW1_BESTPLAYERBYGROUP_H
 
-#include "group.h"
+#include "Group.h"
 
 class BestPlayerByGroup{
     int id;

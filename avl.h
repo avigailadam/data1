@@ -88,7 +88,7 @@ public:
             max = max->rightSon;
     }
 
-    InnerAvlTree<T> * getMax() const {
+    InnerAvlTree<T> *getMax() const {
         assert(max != nullptr);
         return max;
     }
@@ -364,8 +364,7 @@ public:
             tree->insert(x);
             balance();
             tree->setMax();
-        }
-        else {
+        } else {
             tree = new InnerAvlTree<T>(x);
         }
     }
@@ -376,8 +375,7 @@ public:
             tree->insert_unique(std::move(x));
             balance();
             tree->setMax();
-        }
-        else
+        } else
             tree = new InnerAvlTree<T>(std::move(x));
     }
 

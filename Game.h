@@ -2,9 +2,7 @@
 #define HW1_GAME_H
 
 #include "avl.h"
-#include "PlayerById.h"
-#include "group.h"
-#include "PlayerLevel.h"
+#include "Players.h"
 #include "BestPlayerByGroup.h"
 
 class Game {

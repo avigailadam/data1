@@ -1,6 +1,6 @@
 
 #include "library1.h"
-#include "game.h"
+#include "Game.h"
 #include <vector>
 
 void *Init() {
@@ -74,8 +74,6 @@ StatusType GetAllPlayersByLevel(void *DS, int GroupID, int **Players, int *numOf
     catch (NotExist &res) { return FAILURE; }
     catch (std::bad_alloc &e) { return ALLOCATION_ERROR; }
     return SUCCESS;
-
-
 }
 
 StatusType GetGroupsHighestLevel(void *DS, int numOfGroups, int **Players){

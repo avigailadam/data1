@@ -1,4 +1,4 @@
-#include "game.h"
+#include "Game.h"
 #include "avl.h"
 
 
@@ -7,52 +7,51 @@ void Game::AddGroup(int groupID) {
 }
 
 void Game::AddPlayer(int playerID, int groupID, int level) {
-    Group &group = groupTree.find(Group(groupID));
-    PlayerById tmp(group,0,playerID);
-    try{
-        playersTree.find(tmp);
+    Group *group = &groupTree.find(Group(groupID));
+    Player player(playerID, level, group);
+    PlayerById playerById(player);
+    try {
+        playersTree.find(playerById);
         throw AlreadyExist();
-    }catch (NotExist &e){}
-    PlayerLevel playerByLevel(level, playerID);
+    } catch (NotExist &e) {}
+    PlayerLevel playerByLevel(player, &playerById);
     bool thereIsPrev = true;
-    if (group.getPlayersByLevel().isEmpty())
+    if (group->getPlayersByLevel().isEmpty())
         thereIsPrev = false;
-    PlayerLevel prevMax(-1, -1);
-    if (thereIsPrev)
-        prevMax = group.getPlayersByLevel().getMax();
-    group.addPlayer(playerByLevel);
-    PlayerById playerById(group, level, playerID);
+    int playerPrevId = thereIsPrev ? group->getPlayersByLevel().getMax().getId() : (-1);
+    group->addPlayer(playerByLevel);
     playersTree.insert(playerById);
     levelsTree.insert(playerByLevel);
-    PlayerLevel currMax = group.getPlayersByLevel().getMax();
-    if (thereIsPrev && prevMax == currMax)
+    PlayerLevel currMax = group->getPlayersByLevel().getMax();
+    if (thereIsPrev && playerPrevId == currMax.getId())
         return;
     if (thereIsPrev)
-        bestPlayersPerGroup.remove(BestPlayerByGroup(prevMax.getId(), groupID));
+        bestPlayersPerGroup.remove(BestPlayerByGroup(playerPrevId, groupID));
     bestPlayersPerGroup.insert(BestPlayerByGroup(currMax.getId(), groupID));
 }
 
-void Game::RemovePlayer(int PlayerID) {
-    Group tmp(1);
-    const PlayerById playerTemp(tmp, 0, PlayerID);
-    PlayerById playerById = playersTree.find(playerTemp);
-    Group &group = playerById.getGroup();
-    PlayerLevel temp(playerById.getLevel(), playerById.getId());
-    PlayerLevel playerByLevel = levelsTree.find(temp);
-    assert(!group.getPlayersByLevel().isEmpty());
-    PlayerLevel prevMax = group.getPlayersByLevel().getMax();
-    group.removePlayer(playerByLevel);
+void Game::RemovePlayer(int playerId) {
+    Group tmpGroup(1);
+    Player tmpPlayer(playerId, 0, &tmpGroup);
+    PlayerById tmpPlayerById(tmpPlayer);
+    PlayerById playerById = playersTree.find(tmpPlayerById);
+    PlayerLevel tmpLevel(tmpPlayerById.getPlayer());
+    PlayerLevel playerByLevel = levelsTree.find(tmpLevel);
+    Group *group = playerByLevel.getGroup();
+    assert(!group->getPlayersByLevel().isEmpty());
+    PlayerLevel prevMax = group->getPlayersByLevel().getMax();
+    group->removePlayer(playerByLevel);
     playersTree.remove(playerById);
     levelsTree.remove(playerByLevel);
-    if (group.getPlayersByLevel().isEmpty()) {
-        bestPlayersPerGroup.remove(BestPlayerByGroup(prevMax.getId(), group.getId()));
+    if (group->getPlayersByLevel().isEmpty()) {
+        bestPlayersPerGroup.remove(BestPlayerByGroup(prevMax.getId(), group->getId()));
         return;
     }
-    PlayerLevel currMax = group.getPlayersByLevel().getMax();
+    PlayerLevel currMax = group->getPlayersByLevel().getMax();
     if (prevMax == currMax)
         return;
-    bestPlayersPerGroup.remove(BestPlayerByGroup(prevMax.getId(), group.getId()));
-    bestPlayersPerGroup.insert(BestPlayerByGroup(currMax.getId(), group.getId()));
+    bestPlayersPerGroup.remove(BestPlayerByGroup(prevMax.getId(), group->getId()));
+    bestPlayersPerGroup.insert(BestPlayerByGroup(currMax.getId(), group->getId()));
 }
 
 void Game::ReplaceGroup(int groupID, int replacementID) {
@@ -60,9 +59,9 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     const Group &srcGroup = groupTree.find(groupTmp);
     Group groupTmp2(replacementID);
     Group &repGroup = groupTree.find(groupTmp2);
-    std::vector<PlayerLevel*> srcVec = srcGroup.getInorderLevel();
-    std::vector<PlayerLevel*> repVec = repGroup.getInorderLevel();
-    std::vector<PlayerLevel> merged = merge(srcVec, repVec );
+    std::vector<PlayerLevel *> srcVec = srcGroup.getInorderLevel();
+    std::vector<PlayerLevel *> repVec = repGroup.getInorderLevel();
+    std::vector<PlayerLevel> merged = merge(srcVec, repVec);
     BestPlayerByGroup srcBest(srcGroup.getPlayersByLevel().getMax().getId(), groupID);
     groupTree.remove(srcGroup);
     bestPlayersPerGroup.remove(srcBest);
@@ -70,20 +69,25 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     groupTree.remove(repGroup);
     bestPlayersPerGroup.remove(repBest);
     groupTree.insert_unique(std::unique_ptr<Group>(new Group(replacementID, merged)));
-    Group& newGroup = groupTree.find(Group(replacementID));
+    Group &newGroup = groupTree.find(Group(replacementID));
     BestPlayerByGroup newBest(groupTree.find(groupTmp2).getPlayersByLevel().getMax().getId(), replacementID);
     bestPlayersPerGroup.insert(newBest);
-    //todo change group ref for origin group's players
+    std::vector<PlayerLevel *> newPlayers = newGroup.getInorderLevel();
+    for (PlayerLevel* p: newPlayers) {
+        p->getPlayerById()->setGroup(&newGroup);
+    }
+    //todo: update players by id to new group
 }
 
 void Game::IncreaseLevel(int playerID, int levelIncrease) {
-    Group group(0);
-    PlayerById playerTemp(group, playerID, playerID);
-    PlayerById playerById = playersTree.find(playerTemp);
-    BestPlayerByGroup prevMax(playerById.getGroup());
+    Group groupTmp(3);
+    Player playerTmp(playerID, -1, &groupTmp);
+    PlayerById tmpById(playerTmp);
+    PlayerById playerById = playersTree.find(tmpById);
+    BestPlayerByGroup prevMax(*playerById.getGroup());
     RemovePlayer(playerID);
-    AddPlayer(playerID, playerById.getGroup().getId(), playerById.getLevel() + levelIncrease);
-    BestPlayerByGroup newMax(playerById.getGroup());
+    AddPlayer(playerID, playerById.getGroup()->getId(), playerById.getLevel() + levelIncrease);
+    BestPlayerByGroup newMax(*playerById.getGroup());
     if (prevMax == newMax)
         return;
     bestPlayersPerGroup.remove(prevMax);
