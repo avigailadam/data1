@@ -60,7 +60,9 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     const Group &srcGroup = groupTree.find(groupTmp);
     Group groupTmp2(replacementID);
     Group &repGroup = groupTree.find(groupTmp2);
-    std::vector<PlayerLevel> merged = merge(srcGroup.getInorderLevel(), repGroup.getInorderLevel());
+    std::vector<PlayerLevel*> srcVec = srcGroup.getInorderLevel();
+    std::vector<PlayerLevel*> repVec = repGroup.getInorderLevel();
+    std::vector<PlayerLevel> merged = merge(srcVec, repVec );
     BestPlayerByGroup srcBest(srcGroup.getPlayersByLevel().getMax().getId(), groupID);
     groupTree.remove(srcGroup);
     bestPlayersPerGroup.remove(srcBest);
@@ -130,7 +132,7 @@ std::vector<PlayerLevel> Game::merge(std::vector<PlayerLevel *> v1, std::vector<
     auto p1 = v1.begin();
     auto p2 = v2.begin();
     while (p1 != v1.end() || p2 != v2.end()) {
-        if (p1 != v1.end() && (p2 == v2.end() || *p1 < *p2)) {
+        if (p1 != v1.end() && (p2 == v2.end() || **p1 < **p2)) {
             res.push_back(**p1);
             p1++;
             continue;
