@@ -5,6 +5,10 @@
 #include <vector>
 #include <cassert>
 #include <cmath>
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 template<class T>
 std::vector<T> sliceVec(std::vector<T> vector, int start, int end) {
@@ -103,7 +107,7 @@ public:
     }
 
 
-    void setHeight() {
+    void updateHeight() {
         int leftHeight = leftSon == nullptr ? -1 : leftSon->height;
         int rightHeight = rightSon == nullptr ? -1 : rightSon->height;
         if (leftHeight - rightHeight > 0) {
@@ -181,6 +185,7 @@ private:
 public:
     InnerAvlTree<T> *balance() {
         const int balanceFactor = BalanceFactor();
+        assert(std::abs(balanceFactor) <= 2);
         if (balanceFactor > 1) {
             if (leftSon->BalanceFactor() >= 0) {
                 return Right_rotate();
@@ -313,6 +318,27 @@ public:
             return this;
     }
 
+    void debugTree(int depth) {
+        for (int i = 0; i < depth; ++i) {
+            cout << "  ";
+        }
+        cout << data << endl;
+        if (leftSon != nullptr) {
+            for (int i = 0; i < depth; ++i) {
+                cout << "  ";
+            }
+            cout << "Left son" << endl;
+            leftSon->debugTree(depth + 1);
+        }
+        if (rightSon != nullptr) {
+            for (int i = 0; i < depth; ++i) {
+                cout << "  ";
+            }
+            cout << "Right son" << endl;
+            rightSon->debugTree(depth + 1);
+        }
+    }
+
 private:
     int calcHeight() const {
         int leftHeight = leftSon == nullptr ? -1 : leftSon->calcHeight();
@@ -320,22 +346,21 @@ private:
         return std::max(leftHeight, rightHeight) + 1;
 
     }
+    void validate_pointers() const {
+        if (rightSon != nullptr) {
+            assert(rightSon->father == this);
+            rightSon -> validate_pointers();
+        }
+        if (leftSon != nullptr) {
+            assert(leftSon->father == this);
+            leftSon -> validate_pointers();
+        }
+    }
 
 public:
     bool validate_height() const {
-        if (leftSon == nullptr && rightSon == nullptr) {
-            return height == 0;
-        }
-        if (leftSon == nullptr) {
-            return height == rightSon->calcHeight() + 1 && rightSon->validate_height();
-        }
-        if (rightSon == nullptr) {
-            return height == leftSon->calcHeight() + 1 && leftSon->validate_height();
-        }
-        int leftHeight = leftSon->calcHeight() + 1;
-        int rightHeight = rightSon->calcHeight() + 1;
-        int realHeight = leftHeight < rightHeight ? rightHeight : leftHeight;
-        return realHeight == height && rightSon->validate_height() && leftSon->validate_height();
+        validate_pointers();
+        return calcHeight() == height;
     }
 
     void getNLowest(int n, std::vector<T> *vec) {
@@ -442,6 +467,14 @@ public:
         if (tree != nullptr)
             tree->getNLowest(n, &vec);
         return vec;
+    }
+
+    void debugTree() {
+        if (tree == nullptr) {
+            cout << "null" << endl;
+            return;
+        }
+        tree->debugTree(0);
     }
 };
 
