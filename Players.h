@@ -206,6 +206,10 @@ public:
             throw NotExist();
         return playersByLevel->getMax();
     }
+
+    bool isEmpty() const {
+        return playersByLevel->isEmpty();
+    }
 };
 
 #endif //HW1_PLAYERS_H

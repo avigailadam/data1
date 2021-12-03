@@ -43,12 +43,14 @@ void Game::RemovePlayer(int playerId) {
         playersTree.remove(playerById);
         return;
     }
-    playersTree.remove(playerById);
     PlayerLevel currMax = group->getPlayersByLevel().getMax();
-    if (prevMax == currMax)
+    if (prevMax == currMax) {
+        playersTree.remove(playerById);
         return;
+    }
     bestPlayersPerGroup.remove(BestPlayerByGroup(prevMax.getId(), group->getId()));
     bestPlayersPerGroup.insert(BestPlayerByGroup(currMax.getId(), group->getId()));
+    playersTree.remove(playerById);
 }
 
 void Game::ReplaceGroup(int groupID, int replacementID) {
@@ -56,19 +58,24 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     const Group &srcGroup = groupTree.find(groupTmp);
     Group groupTmp2(replacementID);
     Group &repGroup = groupTree.find(groupTmp2);
+    if (srcGroup.isEmpty()) {
+        groupTree.remove(srcGroup);
+        return;
+    }
     std::vector<PlayerLevel *> srcVec = srcGroup.getInorderLevel();
     std::vector<PlayerLevel *> repVec = repGroup.getInorderLevel();
     std::vector<PlayerLevel> merged = merge(srcVec, repVec);
     BestPlayerByGroup srcBest(srcGroup.getPlayersByLevel().getMax().getId(), groupID);
     groupTree.remove(srcGroup);
     bestPlayersPerGroup.remove(srcBest);
-    if (!repGroup.getPlayersByLevel().isEmpty()) {
+    if (!repGroup.isEmpty()) {
         BestPlayerByGroup repBest(repGroup.getPlayersByLevel().getMax().getId(), replacementID);
         bestPlayersPerGroup.remove(repBest);
     }
     groupTree.remove(repGroup);
     groupTree.insert_unique(std::unique_ptr<Group>(new Group(replacementID, merged)));
     Group &newGroup = groupTree.find(Group(replacementID));
+    assert(!newGroup.isEmpty());
     BestPlayerByGroup newBest(groupTree.find(groupTmp2).getPlayersByLevel().getMax().getId(), replacementID);
     bestPlayersPerGroup.insert(newBest);
     std::vector<PlayerLevel *> newPlayers = newGroup.getInorderLevel();
@@ -106,6 +113,8 @@ int Game::getHighestLevel(int groupID) {
         return player.getId();
     }
     Group &group = groupTree.find(groupID);
+    if (group.isEmpty())
+        return -1;
     PlayerLevel groupPlayer = group.getMax();
     return groupPlayer.getId();
 }
@@ -129,6 +138,8 @@ std::vector<int> Game::GetAllPlayersByLevel(int groupID) {
 }
 
 std::vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
+    if (numOfGroups == 0)
+        throw InvalidInput();
     std::vector<BestPlayerByGroup> tmp = bestPlayersPerGroup.getNLowest(numOfGroups);
     if (tmp.size() != numOfGroups)
         throw NotEnoughGroups();

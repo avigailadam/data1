@@ -364,12 +364,15 @@ public:
     }
 
     void getNLowest(int n, std::vector<T> *vec) {
-        if (n == 0)
+        assert(vec->size() <= n);
+        if (vec->size() == n)
             return;
         if (leftSon != nullptr)
             leftSon->getNLowest(n, vec);
+        assert(vec->size() <= n);
+        if (n == vec->size())
+            return;
         vec->push_back(data);
-        n--;
         if (rightSon != nullptr)
             rightSon->getNLowest(n, vec);
     }
