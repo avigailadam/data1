@@ -59,9 +59,9 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     const Group &srcGroup = groupTree.find(groupTmp);
     Group groupTmp2(replacementID);
     Group &repGroup = groupTree.find(groupTmp2);
-    std::vector<PlayerLevel *> srcVec = srcGroup.getInorderLevel();
-    std::vector<PlayerLevel *> repVec = repGroup.getInorderLevel();
-    std::vector<PlayerLevel> merged = merge(srcVec, repVec);
+    std::vector < PlayerLevel * > srcVec = srcGroup.getInorderLevel();
+    std::vector < PlayerLevel * > repVec = repGroup.getInorderLevel();
+    std::vector <PlayerLevel> merged = merge(srcVec, repVec);
     BestPlayerByGroup srcBest(srcGroup.getPlayersByLevel().getMax().getId(), groupID);
     groupTree.remove(srcGroup);
     bestPlayersPerGroup.remove(srcBest);
@@ -72,9 +72,14 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     Group &newGroup = groupTree.find(Group(replacementID));
     BestPlayerByGroup newBest(groupTree.find(groupTmp2).getPlayersByLevel().getMax().getId(), replacementID);
     bestPlayersPerGroup.insert(newBest);
-    std::vector<PlayerLevel *> newPlayers = newGroup.getInorderLevel();
-    for (PlayerLevel* p: newPlayers) {
-        p->getPlayerById()->setGroup(&newGroup);
+    std::vector < PlayerLevel * > newPlayers = newGroup.getInorderLevel();
+
+    for (PlayerLevel *p: newPlayers) {
+        assert(p != nullptr);
+        PlayerById *pId = p->getPlayerById();
+        assert(pId != nullptr);
+        p->getGroup()
+        pId->setGroup(&newGroup);
     }
     //todo: update players by id to new group
 }

@@ -1,7 +1,7 @@
 #ifndef HW1_BESTPLAYERBYGROUP_H
 #define HW1_BESTPLAYERBYGROUP_H
 
-#include "Group.h"
+#include "Players.h"
 
 class BestPlayerByGroup{
     int id;
@@ -20,19 +20,19 @@ public:
     }
 
     bool operator>(const BestPlayerByGroup &other) const {
-        return id == other.id ? false : groupID > other.groupID;
+        return groupID > other.groupID;
     }
 
     bool operator==(const BestPlayerByGroup &other) const {
-        return id == other.id;
+        return groupID == other.groupID;
     }
 
     bool operator!=(const BestPlayerByGroup &other) const {
-        return id != other.id;
+        return groupID != other.groupID;
     }
 
     bool operator<(const BestPlayerByGroup &other) const {
-        return id == other.id ? false : groupID < other.groupID;
+        return groupID < other.groupID;
     }
 };
 

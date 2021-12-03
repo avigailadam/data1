@@ -83,9 +83,10 @@ StatusType GetGroupsHighestLevel(void *DS, int numOfGroups, int **Players){
     try{
         res = ((Game*)DS)->getGroupsHighestLevel(numOfGroups);
         int size= (int)res.size();
-        int* arr= (int*)malloc(sizeof (arr)*size);
-        for(int i : res)
-            arr[i]=res[i];
+        int* arr= (int*)malloc(sizeof (int)*size);
+        for (int i = 0; i < size; ++i) {
+            arr[i]=res.at(i);
+        }
         *Players= arr;
     }
     catch (NotEnoughGroups &x) {

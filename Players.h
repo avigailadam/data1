@@ -25,6 +25,7 @@ public:
     }
 
     void setGroup(Group *g) {
+        assert(g != nullptr);
         group = g;
     }
 
