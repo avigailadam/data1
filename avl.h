@@ -254,7 +254,6 @@ public:
             if (next == nullptr) {
                 auto result = leftSon;
                 leftSon = nullptr;
-                setHeight();
                 return result;
             }
             while (next->leftSon != nullptr)
@@ -265,6 +264,8 @@ public:
                 }
                 next->father->leftSon = next->rightSon;
                 next->rightSon = rightSon;
+                if (next->father != nullptr)
+                    next->father->setHeight();
             }
             next->leftSon = leftSon;
             if (leftSon) {
@@ -273,28 +274,33 @@ public:
             rightSon = nullptr;
             leftSon = nullptr;
             next->father = father;
-            setHeight();
+            if (next->father != nullptr)
+                next->father->setHeight();
             return next;
-        } else if (data > info) {
+        }
+        if (data > info) {
             if (leftSon == nullptr)
                 throw NotExist();
             auto newRoot = this->leftSon->remove(info);
             if (newRoot != leftSon)
                 delete leftSon;
             leftSon = newRoot;
-            setHeight();
-            return this;
-        } else {
-            assert (data < info);
-            if (rightSon == nullptr)
-                throw NotExist();
-            auto newRoot = rightSon->remove(info);
-            if (newRoot != rightSon)
-                delete rightSon;
-            rightSon = newRoot;
+            if (leftSon != nullptr)
+                leftSon->setHeight();
             setHeight();
             return this;
         }
+        assert (data < info);
+        if (rightSon == nullptr)
+            throw NotExist();
+        auto newRoot = rightSon->remove(info);
+        if (newRoot != rightSon)
+            delete rightSon;
+        rightSon = newRoot;
+        if (rightSon != nullptr)
+            rightSon->setHeight();
+        setHeight();
+        return this;
     }
 
 private:
@@ -397,9 +403,12 @@ public:
         if (newTree != tree)
             delete tree;
         tree = newTree;
-        if (tree != nullptr)
+        balance();
+        if (tree != nullptr) {
+            tree->setHeight();
             tree->setMax();
-//        assert(tree == nullptr || tree->validate_height());
+        }
+        assert(tree == nullptr || tree->validate_height());
     }
 
     void recursiveAvl(const std::vector<T> &vector) {

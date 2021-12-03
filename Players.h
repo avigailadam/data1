@@ -80,6 +80,7 @@ public:
     bool operator<(const PlayerById &other) const {
         return player.getId() < other.player.getId();
     }
+
     void setGroup(Group *group) {
         player.setGroup(group);
     }
@@ -87,10 +88,8 @@ public:
 
 
 class PlayerLevel {
-    Player player;
     PlayerById *playerById;
 public:
-    explicit PlayerLevel(Player &player) : player(player), playerById(nullptr) {}
 
     PlayerLevel(Player &player, PlayerById *playerById) : player(player), playerById(playerById) {}
 
@@ -105,33 +104,32 @@ public:
     }
 
     bool operator==(const PlayerLevel &other) const {
-        return player.getId() == other.player.getId();
+        return playerById->getId() == other.playerById->getId();
     }
 
     bool operator<(const PlayerLevel &other) const {
-        if (player.getId() == other.player.getId())
+        if (playerById->getId() == other.playerById->getId())
             return false;
-        return player.getLevel() == other.player.getLevel()
-               ? player.getId() > other.player.getId()
-               : player.getLevel() < other.player.getLevel();
+        return playerById->getLevel() == other.playerById->getLevel()
+               ? playerById->getId() > other.playerById->getId()
+               : playerById->getLevel() < other.playerById->getLevel();
     }
 
     bool operator!=(const PlayerLevel &other) const {
-        return player.getId() != other.player.getId();
+        return playerById->getId() != other.playerById->getId();
     }
 
     int getLevel() const {
-        return player.getLevel();
+        return playerById->getLevel();
     }
 
     int getId() const {
-        return player.getId();
+        return playerById->getId();
     }
 
     Group *getGroup() const {
-        return player.getGroup();
+        return playerById->getGroup();
     }
-
 
 
     PlayerById *getPlayerById() {
@@ -190,6 +188,7 @@ public:
     }
 
     const AvlTree<PlayerLevel> &getPlayersByLevel() const {
+        assert(playersByLevel != nullptr);
         return *playersByLevel;
     }
 

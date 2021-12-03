@@ -23,7 +23,6 @@ StatusType AddPlayer(void *DS, int PlayerID, int GroupID, int Level) {
     catch (AlreadyExist &res) { return FAILURE; }
     catch (NotExist &res) { return FAILURE; }
     return SUCCESS;
-
 }
 
 StatusType RemovePlayer(void *DS, int PlayerID) {
@@ -43,8 +42,8 @@ StatusType ReplaceGroup(void *DS, int GroupID, int ReplacementID) {
 
 }
 
-StatusType IncreaseLevel(void *DS, int PlayerID, int LevelIncrease){
-    if (DS == NULL || LevelIncrease <= 0 || PlayerID <= 0 )
+StatusType IncreaseLevel(void *DS, int PlayerID, int LevelIncrease) {
+    if (DS == NULL || LevelIncrease <= 0 || PlayerID <= 0)
         return INVALID_INPUT;
     try { ((Game *) DS)->IncreaseLevel(PlayerID, LevelIncrease); }
     catch (std::bad_alloc &e) { return ALLOCATION_ERROR; }
@@ -52,42 +51,43 @@ StatusType IncreaseLevel(void *DS, int PlayerID, int LevelIncrease){
     return SUCCESS;
 }
 
-StatusType GetHighestLevel(void *DS, int GroupID, int *PlayerID){
-    if (DS == NULL||PlayerID==NULL||GroupID==0)
+StatusType GetHighestLevel(void *DS, int GroupID, int *PlayerID) {
+    if (DS == NULL || PlayerID == NULL || GroupID == 0)
         return INVALID_INPUT;
-    try { *PlayerID= ((Game *) DS)->getHighestLevel(GroupID); }
+    try { *PlayerID = ((Game *) DS)->getHighestLevel(GroupID); }
     catch (NotExist &res) { return FAILURE; }
     return SUCCESS;
 }
 
-StatusType GetAllPlayersByLevel(void *DS, int GroupID, int **Players, int *numOfPlayers){
-    if (DS == NULL||GroupID==0||Players==NULL||numOfPlayers==NULL)
+StatusType GetAllPlayersByLevel(void *DS, int GroupID, int **Players, int *numOfPlayers) {
+    if (DS == NULL || GroupID == 0 || Players == NULL || numOfPlayers == NULL)
         return INVALID_INPUT;
-    try{ std::vector<int> vec = ((Game *) DS)->GetAllPlayersByLevel(GroupID);
-        int size= (int)vec.size();
+    try {
+        std::vector<int> vec = ((Game *) DS)->GetAllPlayersByLevel(GroupID);
+        int size = (int) vec.size();
         *numOfPlayers = size;
-      int* arr= (int*)malloc(sizeof (arr)*size);
-      for(int i : vec)
-          arr[i]=vec[size-1-i];
-      *Players= arr;
+        int *arr = (int *) malloc(sizeof(arr) * size);
+        for(int i = 0; i < size; i++)
+            arr[i] = vec.at(size - 1 - i);
+        *Players = arr;
     }
     catch (NotExist &res) { return FAILURE; }
     catch (std::bad_alloc &e) { return ALLOCATION_ERROR; }
     return SUCCESS;
 }
 
-StatusType GetGroupsHighestLevel(void *DS, int numOfGroups, int **Players){
+StatusType GetGroupsHighestLevel(void *DS, int numOfGroups, int **Players) {
     if (Players == nullptr || DS == nullptr)
         return INVALID_INPUT;
     std::vector<int> res;
-    try{
-        res = ((Game*)DS)->getGroupsHighestLevel(numOfGroups);
-        int size= (int)res.size();
-        int* arr= (int*)malloc(sizeof (int)*size);
+    try {
+        res = ((Game *) DS)->getGroupsHighestLevel(numOfGroups);
+        int size = (int) res.size();
+        int *arr = (int *) malloc(sizeof(int) * size);
         for (int i = 0; i < size; ++i) {
-            arr[i]=res.at(i);
+            arr[i] = res.at(i);
         }
-        *Players= arr;
+        *Players = arr;
     }
     catch (NotEnoughGroups &x) {
         return FAILURE;
@@ -95,7 +95,7 @@ StatusType GetGroupsHighestLevel(void *DS, int numOfGroups, int **Players){
     catch (InvalidInput &x) {
         return INVALID_INPUT;
     }
-    catch(std::bad_alloc &e){
+    catch (std::bad_alloc &e) {
         return ALLOCATION_ERROR;
     }
     return SUCCESS;
@@ -103,6 +103,7 @@ StatusType GetGroupsHighestLevel(void *DS, int numOfGroups, int **Players){
 
 void Quit(void **DS) {
     delete (Game *) *DS;
+    *DS = nullptr;
 }
 
 //catch (AllocationError){return ALLOCATION_ERROR;}
