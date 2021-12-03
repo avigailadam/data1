@@ -77,7 +77,7 @@ public:
             leftSon->father = this;
         }
 
-        setHeight();
+//        setHeight();
         assert(BalanceFactor() < 2 && BalanceFactor() > -2);
         setMax();
     }
@@ -113,6 +113,12 @@ public:
         }
     }
 
+    int calHeight(InnerAvlTree<T> *t) {
+        if (t == nullptr) return -1;
+        t->height = std::max(calHeight(t->rightSon), calHeight(t->leftSon)) + 1;
+        return t->height;
+    }
+
 private:
 
     int BalanceFactor() {
@@ -131,8 +137,10 @@ private:
         father = newRightSon;
         newRightSon->leftSon = this;
         rightSon = temp;
-        setHeight();
-        newRightSon->setHeight();
+//            setHeight();
+//            newRightSon->setHeight();
+//        height = calHeight(this);
+//        newRightSon->height = calHeight(newRightSon);
         return newRightSon;
     }
 
@@ -146,8 +154,10 @@ private:
         father = newLeftSon;
         newLeftSon->rightSon = this;
         leftSon = temp;
-        setHeight();
-        newLeftSon->setHeight();
+//            setHeight();
+//            newLeftSon->setHeight();
+//        height = calHeight(this);
+//        newLeftSon->height = calHeight(newLeftSon);
         return newLeftSon;
 
     }
@@ -208,7 +218,7 @@ public:
                 leftSon->insert(x);
             }
         }
-        setHeight();
+//        setHeight();
         setMax();
     }
 
@@ -231,7 +241,7 @@ public:
                 leftSon->insert_unique(std::move(x));
             }
         }
-        setHeight();
+//        setHeight();
         setMax();
     }
 
@@ -264,8 +274,8 @@ public:
                 }
                 next->father->leftSon = next->rightSon;
                 next->rightSon = rightSon;
-                if (next->father != nullptr)
-                    next->father->setHeight();
+//                if (next->father != nullptr)
+//                    next->father->setHeight();
             }
             next->leftSon = leftSon;
             if (leftSon) {
@@ -274,9 +284,9 @@ public:
             rightSon = nullptr;
             leftSon = nullptr;
             next->father = father;
-            if (next->father != nullptr)
-                next->father->setHeight();
-            return next;
+//            if (next->father != nullptr)
+//                next->father->setHeight();
+                return next;
         }
         if (data > info) {
             if (leftSon == nullptr)
@@ -285,10 +295,10 @@ public:
             if (newRoot != leftSon)
                 delete leftSon;
             leftSon = newRoot;
-            if (leftSon != nullptr)
-                leftSon->setHeight();
-            setHeight();
-            return this;
+//            if (leftSon != nullptr)
+//                leftSon->setHeight();
+//            setHeight();
+                return this;
         }
         assert (data < info);
         if (rightSon == nullptr)
@@ -297,10 +307,10 @@ public:
         if (newRoot != rightSon)
             delete rightSon;
         rightSon = newRoot;
-        if (rightSon != nullptr)
-            rightSon->setHeight();
-        setHeight();
-        return this;
+//        if (rightSon != nullptr)
+//            rightSon->setHeight();
+//        setHeight();
+            return this;
     }
 
 private:
@@ -368,7 +378,9 @@ public:
     void insert(T x) {
         if (tree != nullptr) {
             tree->insert(x);
+            tree->setHeight();
             balance();
+            tree->setHeight();
             tree->setMax();
         } else {
             tree = new InnerAvlTree<T>(x);
@@ -379,7 +391,9 @@ public:
     void insert_unique(std::unique_ptr<T> x) {
         if (tree != nullptr) {
             tree->insert_unique(std::move(x));
+            tree->setHeight();
             balance();
+            tree->setHeight();
             tree->setMax();
         } else
             tree = new InnerAvlTree<T>(std::move(x));
@@ -404,7 +418,9 @@ public:
             delete tree;
         tree = newTree;
         balance();
+//        tree->setHeight();
         if (tree != nullptr) {
+//            tree->setHeight();
             tree->setHeight();
             tree->setMax();
         }

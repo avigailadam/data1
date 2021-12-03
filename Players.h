@@ -91,16 +91,16 @@ class PlayerLevel {
     PlayerById *playerById;
 public:
 
-    PlayerLevel(Player &player, PlayerById *playerById) : player(player), playerById(playerById) {}
+    PlayerLevel(PlayerById *playerById) : playerById(playerById) {}
 
     PlayerLevel(const PlayerLevel &other) = default;
 
     bool operator>(const PlayerLevel &other) const {
-        if (player.getId() == other.player.getId())
+        if (playerById->getId() == other.getId())
             return false;
-        return player.getLevel() == other.player.getLevel()
-               ? player.getId() < other.player.getId()
-               : player.getLevel() > other.player.getLevel();
+        return playerById->getLevel() == other.playerById->getLevel()
+               ? playerById->getId() < other.playerById->getId()
+               : playerById->getLevel() > other.playerById->getLevel();
     }
 
     bool operator==(const PlayerLevel &other) const {

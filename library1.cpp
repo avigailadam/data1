@@ -106,7 +106,3 @@ void Quit(void **DS) {
     *DS = nullptr;
 }
 
-//catch (AllocationError){return ALLOCATION_ERROR;}
-//catch (){return INVALID_INPUT;}
-//catch (){return FAILURE;}
-//catch (){return SUCCESS;}
