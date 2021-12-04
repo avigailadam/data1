@@ -109,6 +109,8 @@ void Game::IncreaseLevel(int playerID, int levelIncrease) {
 
 int Game::getHighestLevel(int groupID) {
     if (groupID < 0) {
+        if (levelsTree.isEmpty())
+            return -1;
         PlayerLevel player = levelsTree.getMax();
         return player.getId();
     }
@@ -137,8 +139,8 @@ std::vector<int> Game::GetAllPlayersByLevel(int groupID) {
     return res;
 }
 
-std::vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
-    if (numOfGroups == 0)
+my_vectorr<int> Game::getGroupsHighestLevel(int numOfGroups) {
+    if (numOfGroups < 1)
         throw InvalidInput();
     std::vector<BestPlayerByGroup> tmp = bestPlayersPerGroup.getNLowest(numOfGroups);
     if (tmp.size() != numOfGroups)

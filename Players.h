@@ -1,6 +1,8 @@
 #ifndef HW1_PLAYERS_H
 #define HW1_PLAYERS_H
 
+#include <ostream>
+
 class Group;
 
 class Player {
@@ -9,6 +11,11 @@ class Player {
     Group *group;
 public:
     Player(int id, int level, Group *group) : id(id), level(level), group(group) {}
+
+    friend std::ostream &operator<<(std::ostream &os, const Player &player) {
+        os << "Player; id: " << player.id << " level: " << player.level << " group: " << player.group;
+        return os;
+    }
 
     Player(const Player &other) = default;
 
@@ -43,6 +50,11 @@ class PlayerById {
     Player player;
 public:
     explicit PlayerById(Player player) : player(player) {}
+
+    friend std::ostream &operator<<(std::ostream &os, const PlayerById &id) {
+        os << "PlayedById; player: " << id.player;
+        return os;
+    }
 
     PlayerById &operator=(const PlayerById &other) {
         this->player.setLevel(other.player.getLevel());
@@ -90,6 +102,10 @@ public:
 class PlayerLevel {
     PlayerById *playerById;
 public:
+    friend std::ostream &operator<<(std::ostream &os, const PlayerLevel &level) {
+        os << "PlayerLevel; playerById: " << level.playerById;
+        return os;
+    }
 
     PlayerLevel(PlayerById *playerById) : playerById(playerById) {}
 
@@ -144,6 +160,11 @@ class Group {
     AvlTree<PlayerLevel> *playersByLevel;
 public:
     Group(const Group &g) = delete;
+
+    friend std::ostream &operator<<(std::ostream &os, const Group &group) {
+        os << "Group; id: " << group.id;
+        return os;
+    }
 
     Group(int id) : id(id), playersByLevel(new AvlTree<PlayerLevel>()) {}
 
