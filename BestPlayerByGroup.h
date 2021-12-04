@@ -8,6 +8,7 @@ class BestPlayerByGroup{
     int id;
     int groupID;
 public:
+    BestPlayerByGroup() : id(0), groupID(0) {}
     BestPlayerByGroup(int id, int groupId) : id(id), groupID(groupId) {}
 
     friend std::ostream &operator<<(std::ostream &os, const BestPlayerByGroup &group) {

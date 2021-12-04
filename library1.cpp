@@ -1,7 +1,6 @@
 
 #include "library1.h"
 #include "Game.h"
-#include <vector>
 
 void *Init() {
     Game *DS = new Game();
@@ -63,8 +62,8 @@ StatusType GetAllPlayersByLevel(void *DS, int GroupID, int **Players, int *numOf
     if (DS == NULL || GroupID == 0 || Players == NULL || numOfPlayers == NULL)
         return INVALID_INPUT;
     try {
-        std::vector<int> vec = ((Game *) DS)->GetAllPlayersByLevel(GroupID);
-        int size = (int) vec.size();
+        my_vector<int> vec = ((Game *) DS)->GetAllPlayersByLevel(GroupID);
+        int size = vec.size();
         *numOfPlayers = size;
         int *arr = (int *) malloc(sizeof(arr) * size);
         for(int i = 0; i < size; i++)
@@ -79,9 +78,8 @@ StatusType GetAllPlayersByLevel(void *DS, int GroupID, int **Players, int *numOf
 StatusType GetGroupsHighestLevel(void *DS, int numOfGroups, int **Players) {
     if (Players == nullptr || DS == nullptr)
         return INVALID_INPUT;
-    std::vector<int> res;
     try {
-        res = ((Game *) DS)->getGroupsHighestLevel(numOfGroups);
+        my_vector<int> res = ((Game *) DS)->getGroupsHighestLevel(numOfGroups);
         int size = (int) res.size();
         int *arr = (int *) malloc(sizeof(int) * size);
         for (int i = 0; i < size; ++i) {

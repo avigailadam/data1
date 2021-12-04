@@ -2,7 +2,6 @@
 #define AVL_H
 
 #include "exceptions.h"
-#include <vector>
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -12,13 +11,8 @@ using std::cout;
 using std::endl;
 
 template<class T>
-my_vector<T> sliceVec(my_vector<T> vector, int start, int end) {
-    if (end == -1 || end < start)
-        return my_vector<T>();
-    typename my_vector<T>::const_iterator first = vector.begin() + start;
-    typename my_vector<T>::const_iterator last = vector.begin() + end + 1;
-    my_vector<T> newVec(first, last);
-    return newVec;
+my_vector<T> sliceVec(my_vector<T>& vector, int start, int end) {
+    return vector.slice(start, end);
 }
 
 
@@ -68,11 +62,8 @@ public:
         delete leftSon;
     }
 
-    explicit InnerAvlTree(const my_vector<T> &vector) : data(vector[vector.size() / 2]), height(0), father(nullptr) {
+    explicit InnerAvlTree(my_vector<T> &vector) : data(vector.at(vector.size() / 2)), height(0), father(nullptr) {
         int size = vector.size();
-        if (size <= 0) {
-            return;
-        }
         my_vector<T> rightVec = sliceVec(vector, (size / 2) + 1, size - 1);
         rightSon = rightVec.empty() ? nullptr : new InnerAvlTree<T>(rightVec);
         int rightHeight = rightSon == nullptr ? -1 : rightSon->height;
@@ -424,8 +415,9 @@ public:
     void validate_unique() {
         auto vec = inOrder();
         for (int i = 0; i < vec.size() - 1; ++i) {
-            if (false == (*vec.at(i) < *vec.at(i + 1))) {
+            if (false == (*(vec.at(i)) < *(vec.at(i + 1)))) {
                 debugTree(0);
+                cout << vec << endl;
                 assert(false);
             }
         }
@@ -521,8 +513,17 @@ public:
     }
 
     my_vector<T *> inOrder() {
-        return tree == nullptr ? my_vector<T *>() : tree->inOrder();
-
+        if (tree == nullptr)
+            return my_vector<T*>();
+        auto result = tree->inOrder();
+        if (!result.is_sorted_ptr()) {
+            for (int i = 0; i < result.size(); ++i) {
+                cout << *result.at(i) << ", ";
+            }
+            cout << endl;
+            assert(false);
+        }
+        return result;
     }
 
     void remove(const T &info) {
@@ -549,7 +550,7 @@ public:
         assert(tree == nullptr || tree->allBalanceFactorUnder1());
     }
 
-    void recursiveAvl(const my_vector<T> &vector) {
+    void recursiveAvl(my_vector<T> &vector) {
         if (vector.empty())
             return;
         tree = new InnerAvlTree<T>(vector);

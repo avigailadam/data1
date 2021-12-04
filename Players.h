@@ -11,9 +11,10 @@ class Player {
     Group *group;
 public:
     Player(int id, int level, Group *group) : id(id), level(level), group(group) {}
+    Player() : id(0), level(0), group(nullptr) {}
 
     friend std::ostream &operator<<(std::ostream &os, const Player &player) {
-        os << "Player; id: " << player.id << " level: " << player.level << " group: " << player.group;
+        os << "id: " << player.id << " level: " << player.level;
         return os;
     }
 
@@ -49,10 +50,11 @@ public:
 class PlayerById {
     Player player;
 public:
+    PlayerById() : player(Player()) {}
     explicit PlayerById(Player player) : player(player) {}
 
     friend std::ostream &operator<<(std::ostream &os, const PlayerById &id) {
-        os << "PlayedById; player: " << id.player;
+        os << "player: " << id.player;
         return os;
     }
 
@@ -103,13 +105,17 @@ class PlayerLevel {
     PlayerById *playerById;
 public:
     friend std::ostream &operator<<(std::ostream &os, const PlayerLevel &level) {
-        os << "PlayerLevel; playerById: " << level.playerById;
+        os << "playerById: " << *level.playerById;
         return os;
+    }
+
+    PlayerLevel() : playerById(nullptr) {
+
     }
 
     PlayerLevel(PlayerById *playerById) : playerById(playerById) {}
 
-    PlayerLevel(const PlayerLevel &other) = default;
+    PlayerLevel(const PlayerLevel &other): playerById(other.playerById) {}
 
     bool operator>(const PlayerLevel &other) const {
         if (playerById->getId() == other.getId())
@@ -162,13 +168,13 @@ public:
     Group(const Group &g) = delete;
 
     friend std::ostream &operator<<(std::ostream &os, const Group &group) {
-        os << "Group; id: " << group.id;
+        os << "id: " << group.id;
         return os;
     }
 
     Group(int id) : id(id), playersByLevel(new AvlTree<PlayerLevel>()) {}
 
-    Group(int id, std::vector<PlayerLevel> vec) : id(id), playersByLevel(new AvlTree<PlayerLevel>()) {
+    Group(int id,  my_vector<PlayerLevel> vec) : id(id), playersByLevel(new AvlTree<PlayerLevel>()) {
         playersByLevel->recursiveAvl(vec);
     }
 
@@ -184,7 +190,7 @@ public:
         delete this->playersByLevel;
     }
 
-    std::vector<PlayerLevel *> getInorderLevel() const {
+    my_vector<PlayerLevel *> getInorderLevel() const {
         return playersByLevel->inOrder();
     }
 

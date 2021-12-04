@@ -11,7 +11,7 @@ class Game {
     AvlTree<Group> groupTree;
     AvlTree<BestPlayerByGroup> bestPlayersPerGroup;
 
-    std::vector<PlayerLevel> merge(std::vector<PlayerLevel *> v1, std::vector<PlayerLevel *> v2);
+    my_vector<PlayerLevel> merge(my_vector<PlayerLevel *> v1, my_vector<PlayerLevel *> v2);
 
 public:
     void AddGroup(int groupID);
@@ -26,9 +26,9 @@ public:
 
     int getHighestLevel(int groupID);
 
-    std::vector<int> GetAllPlayersByLevel(int groupID);
+    my_vector<int> GetAllPlayersByLevel(int groupID);
 
-    std::vector<int> getGroupsHighestLevel(int numOfGroups);
+    my_vector<int> getGroupsHighestLevel(int numOfGroups);
 };
 
 

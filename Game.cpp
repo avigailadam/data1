@@ -62,9 +62,9 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
         groupTree.remove(srcGroup);
         return;
     }
-    std::vector<PlayerLevel *> srcVec = srcGroup.getInorderLevel();
-    std::vector<PlayerLevel *> repVec = repGroup.getInorderLevel();
-    std::vector<PlayerLevel> merged = merge(srcVec, repVec);
+    my_vector<PlayerLevel *> srcVec = srcGroup.getInorderLevel();
+    my_vector<PlayerLevel *> repVec = repGroup.getInorderLevel();
+    my_vector<PlayerLevel> merged = merge(srcVec, repVec);
     BestPlayerByGroup srcBest(srcGroup.getPlayersByLevel().getMax().getId(), groupID);
     groupTree.remove(srcGroup);
     bestPlayersPerGroup.remove(srcBest);
@@ -78,9 +78,10 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     assert(!newGroup.isEmpty());
     BestPlayerByGroup newBest(groupTree.find(groupTmp2).getPlayersByLevel().getMax().getId(), replacementID);
     bestPlayersPerGroup.insert(newBest);
-    std::vector<PlayerLevel *> newPlayers = newGroup.getInorderLevel();
+    my_vector<PlayerLevel *> newPlayers = newGroup.getInorderLevel();
 
-    for (PlayerLevel *p: newPlayers) {
+    for (int i = 0; i < newPlayers.size(); ++i) {
+        auto p = newPlayers.at(i);
         assert(p != nullptr);
         PlayerById *pId = p->getPlayerById();
         assert(pId != nullptr);
@@ -121,50 +122,60 @@ int Game::getHighestLevel(int groupID) {
     return groupPlayer.getId();
 }
 
-std::vector<int> Game::GetAllPlayersByLevel(int groupID) {
+my_vector<int> Game::GetAllPlayersByLevel(int groupID) {
     if (groupID < 0) {
-        std::vector<PlayerLevel *> vec = levelsTree.inOrder();
-        std::vector<int> res = {};
-        for (PlayerLevel *i : vec) {
+        my_vector<PlayerLevel *> vec = levelsTree.inOrder();
+        my_vector<int> res = {};
+        for (int j = 0; j < vec.size(); ++j) {
+            auto i = vec.at(j);
             res.push_back(i->getId());
         }
         return res;
     }
     Group &group = groupTree.find(Group(groupID));
-    std::vector<PlayerLevel *> vec = group.getInorderLevel();
-    std::vector<int> res = {};
-    for (PlayerLevel *i : vec) {
+    my_vector<PlayerLevel *> vec = group.getInorderLevel();
+    my_vector<int> res = {};
+    for (int j = 0; j < vec.size(); ++j) {
+        auto i = vec.at(j);
         res.push_back(i->getId());
     }
     return res;
 }
 
-my_vectorr<int> Game::getGroupsHighestLevel(int numOfGroups) {
+my_vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
     if (numOfGroups < 1)
         throw InvalidInput();
-    std::vector<BestPlayerByGroup> tmp = bestPlayersPerGroup.getNLowest(numOfGroups);
+    my_vector<BestPlayerByGroup> tmp = bestPlayersPerGroup.getNLowest(numOfGroups);
     if (tmp.size() != numOfGroups)
         throw NotEnoughGroups();
-    std::vector<int> res;
-    for (BestPlayerByGroup p: tmp) {
-        res.push_back(p.getId());
+    my_vector<int> res;
+    for (int i = 0; i < tmp.size(); ++i) {
+        res.push_back(tmp.at(i).getId());
     }
     return res;
 }
 
-std::vector<PlayerLevel> Game::merge(std::vector<PlayerLevel *> v1, std::vector<PlayerLevel *> v2) {
-    std::vector<PlayerLevel> res;
-    auto p1 = v1.begin();
-    auto p2 = v2.begin();
-    while (p1 != v1.end() || p2 != v2.end()) {
-        if (p1 != v1.end() && (p2 == v2.end() || **p1 < **p2)) {
-            res.push_back(**p1);
-            p1++;
+my_vector<PlayerLevel> Game::merge(my_vector<PlayerLevel *> v1, my_vector<PlayerLevel *> v2) {
+    assert(v1.is_sorted_ptr());
+    assert(v2.is_sorted_ptr());
+    my_vector<PlayerLevel> res;
+    auto i1 = 0;
+    auto i2 = 0;
+    while (i1 < v1.size() || i2 < v2.size()) {
+        if (i1 != v1.size() && (i2 == v2.size() || *v1.at(i1) < *v2.at(i2))) {
+            PlayerLevel *pLevel = v1.at(i1);
+            assert(pLevel != nullptr);
+            res.push_back(*pLevel);
+            i1++;
             continue;
         }
-        res.push_back(**p2);
-        p2++;
+        assert(i2 < v2.size());
+        PlayerLevel *pLevel = v2.at(i2);
+        assert(pLevel != nullptr);
+            res.push_back(*pLevel);
+        i2++;
     }
+    assert(res.is_sorted());
     return res;
 }
 
