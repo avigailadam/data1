@@ -62,6 +62,7 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
         groupTree.remove(srcGroup);
         return;
     }
+
     my_vector<PlayerLevel *> srcVec = srcGroup.getInorderLevel();
     my_vector<PlayerLevel *> repVec = repGroup.getInorderLevel();
     my_vector<PlayerLevel> merged = merge(srcVec, repVec);
@@ -87,7 +88,6 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
         assert(pId != nullptr);
         pId->setGroup(&newGroup);
     }
-    //todo: update players by id to new group
 }
 
 void Game::IncreaseLevel(int playerID, int levelIncrease) {
@@ -125,7 +125,7 @@ int Game::getHighestLevel(int groupID) {
 my_vector<int> Game::GetAllPlayersByLevel(int groupID) {
     if (groupID < 0) {
         my_vector<PlayerLevel *> vec = levelsTree.inOrder();
-        my_vector<int> res = {};
+        my_vector<int> res(vec.size());
         for (int j = 0; j < vec.size(); ++j) {
             auto i = vec.at(j);
             res.push_back(i->getId());
@@ -134,7 +134,7 @@ my_vector<int> Game::GetAllPlayersByLevel(int groupID) {
     }
     Group &group = groupTree.find(Group(groupID));
     my_vector<PlayerLevel *> vec = group.getInorderLevel();
-    my_vector<int> res = {};
+    my_vector<int> res(vec.size());
     for (int j = 0; j < vec.size(); ++j) {
         auto i = vec.at(j);
         res.push_back(i->getId());
@@ -148,7 +148,7 @@ my_vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
     my_vector<BestPlayerByGroup> tmp = bestPlayersPerGroup.getNLowest(numOfGroups);
     if (tmp.size() != numOfGroups)
         throw NotEnoughGroups();
-    my_vector<int> res;
+    my_vector<int> res(numOfGroups);
     for (int i = 0; i < tmp.size(); ++i) {
         res.push_back(tmp.at(i).getId());
     }
@@ -158,7 +158,7 @@ my_vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
 my_vector<PlayerLevel> Game::merge(my_vector<PlayerLevel *> v1, my_vector<PlayerLevel *> v2) {
     assert(v1.is_sorted_ptr());
     assert(v2.is_sorted_ptr());
-    my_vector<PlayerLevel> res;
+    my_vector<PlayerLevel> res(v1.size() + v2.size());
     auto i1 = 0;
     auto i2 = 0;
     while (i1 < v1.size() || i2 < v2.size()) {

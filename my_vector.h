@@ -35,6 +35,10 @@ public:
         }
     }
 
+    my_vector(int maxSize) : max_size(maxSize) , current_size(0), is_slice(false), array(new T[maxSize]){
+
+    }
+
     my_vector() : array(new T[10]), max_size(10), current_size(0), is_slice(false) {
     }
 
@@ -61,7 +65,7 @@ public:
             return my_vector<T>();
         assert(begin >= 0);
         assert(end < current_size);
-        my_vector<T> result;
+        my_vector<T> result(end - begin + 1);
         for (int i = begin; i <= end; ++i) {
             result.push_back(at(i));
         }

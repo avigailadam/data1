@@ -61,6 +61,7 @@ public:
     PlayerById &operator=(const PlayerById &other) {
         this->player.setLevel(other.player.getLevel());
         this->player.setId(other.player.getId());
+        return  *this;
     }
 
     Player &getPlayer() {

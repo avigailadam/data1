@@ -108,9 +108,6 @@ public:
         int leftHeight = leftSon == nullptr ? -1 : leftSon->height;
         int rightHeight = rightSon == nullptr ? -1 : rightSon->height;
         height = std::max(leftHeight, rightHeight) + 1;
-//        if (father != nullptr)
-//            father->updateHeight();
-//        assert(validate_height());
     }
 
 private:
@@ -245,6 +242,7 @@ public:
         }
         updateHeight();
         setMax();
+        return this;
     }
 
     InnerAvlTree<T> *insert_unique(std::unique_ptr<T> x) {
@@ -270,6 +268,7 @@ public:
         }
         updateHeight();
         setMax();
+        return this;
     }
 
     T &find(const T &info) {
@@ -280,7 +279,7 @@ public:
     }
 
     my_vector<T *> inOrder() {
-        my_vector<T *> vec;
+        my_vector<T *> vec(countTree());
         inOrderAux(this, vec);
         return vec;
     }
@@ -452,6 +451,15 @@ public:
         if (rightSon != nullptr)
             rightSon->getNLowest(n, vec);
     }
+
+    int countTree(){
+        int counter = 1;
+        if (rightSon != nullptr)
+            counter += rightSon->countTree();
+        if (leftSon != nullptr)
+            counter += leftSon->countTree();
+        return counter;
+    }
 };
 
 template<class T>
@@ -541,7 +549,6 @@ public:
             delete tree;
         }
         tree = newTree;
-//        balance(fatherinfo);
         if (tree != nullptr) {
             tree->updateHeight();
             tree->setMax();
@@ -579,7 +586,7 @@ public:
     }
 
     my_vector<T> getNLowest(int n) {
-        my_vector<T> vec;
+        my_vector<T> vec(n);
         if (tree != nullptr)
             tree->getNLowest(n, &vec);
         return vec;
