@@ -1,5 +1,4 @@
 #include <exception>
-#include <cassert>
 #include <ostream>
 
 template<class T>
@@ -63,8 +62,6 @@ public:
     my_vector<T> slice(int begin, int end) {
         if (begin > end)
             return my_vector<T>();
-        assert(begin >= 0);
-        assert(end < current_size);
         my_vector<T> result(end - begin + 1);
         for (int i = begin; i <= end; ++i) {
             result.push_back(at(i));
@@ -74,12 +71,10 @@ public:
 
 
     T &at(int i) {
-        assert(i >= 0 && i < current_size);
         return array[i];
     }
 
     const T &at(int i) const {
-        assert(i >= 0 && i < current_size);
         return array[i];
     }
 

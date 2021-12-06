@@ -2,7 +2,6 @@
 #define AVL_H
 
 #include "exceptions.h"
-#include <cassert>
 #include <cmath>
 #include <iostream>
 #include "my_vector.h"
@@ -79,7 +78,6 @@ public:
         }
 
         updateHeight();
-        assert(balanceFactor() < 2 && balanceFactor() > -2);
         setMax();
     }
 
@@ -90,7 +88,6 @@ public:
     }
 
     InnerAvlTree<T> *getMax() const {
-        assert(max != nullptr);
         return max;
     }
 
@@ -98,11 +95,6 @@ public:
     T &getData() {
         return data;
     }
-
-    int getHeight() const {
-        return height;
-    }
-
 
     void updateHeight() {
         int leftHeight = leftSon == nullptr ? -1 : leftSon->height;
@@ -178,7 +170,6 @@ public:
             }
             return nullptr;
         }
-        assert(info < data);
         return leftSon == nullptr ? nullptr : leftSon->internalFind(info);
     }
 
@@ -192,15 +183,12 @@ public:
             }
             return nullptr;
         }
-        assert(*info < data);
         return leftSon == nullptr ? nullptr : leftSon->internalFind(std::move(info));
     }
 
     InnerAvlTree<T> *balance() {
         int balanceF = balanceFactor();
-        assert(std::abs(balanceF) <= 2);
         if (balanceF > 1) {
-            assert(leftSon != nullptr);
             if (leftSon->balanceFactor() >= 0) {
                 return Right_rotate();
             } else if (leftSon->balanceFactor() == -1) {
@@ -209,7 +197,6 @@ public:
             }
         }
         if (balanceF < -1) {
-            assert(rightSon != nullptr);
             if (rightSon->balanceFactor() <= 0) {
                 return Left_rotate();
             } else if (rightSon->balanceFactor() == 1) {
@@ -290,8 +277,6 @@ public:
             if (next == nullptr) {
                 auto result = leftSon;
                 leftSon = nullptr;
-//                if (result != nullptr)
-//                    result->father = father;
                 return result;
             }
             while (next->leftSon != nullptr)
@@ -341,7 +326,6 @@ public:
             updateHeight();
             return balance();
         }
-        assert (data < info);
         if (rightSon == nullptr)
             throw NotExist();
         auto newRoot = rightSon->remove(info);
@@ -378,32 +362,7 @@ public:
         }
     }
 
-private:
-    int calcHeight() const {
-        int leftHeight = leftSon == nullptr ? -1 : leftSon->calcHeight();
-        int rightHeight = rightSon == nullptr ? -1 : rightSon->calcHeight();
-        return std::max(leftHeight, rightHeight) + 1;
-
-    }
-
-    void validate_pointers() const {
-        if (father != nullptr)
-            assert(father->leftSon == this || father->rightSon == this);
-        if (rightSon != nullptr) {
-            assert(rightSon->father == this);
-            rightSon->validate_pointers();
-        }
-        if (leftSon != nullptr) {
-            assert(leftSon->father == this);
-            leftSon->validate_pointers();
-        }
-    }
-
-
-public:
-
     bool notExists(InnerAvlTree<T> *check) const {
-        assert(check != this);
         if (rightSon != nullptr)
             rightSon->notExists(check);
         if (leftSon != nullptr)
@@ -417,34 +376,16 @@ public:
             if (false == (*(vec.at(i)) < *(vec.at(i + 1)))) {
                 debugTree(0);
                 cout << vec << endl;
-                assert(false);
             }
         }
     }
 
-    bool validate_height() {
-        validate_unique();
-        validate_pointers();
-        return calcHeight() == height;
-    }
-
-
-    bool allBalanceFactorUnder1() const {
-        bool right = true, left = true;
-        if (rightSon != nullptr)
-            right = rightSon->allBalanceFactorUnder1();
-        if (leftSon != nullptr)
-            left = leftSon->allBalanceFactorUnder1();
-        return std::abs(balanceFactor()) <= 1 && right && left;
-    }
 
     void getNLowest(int n, my_vector<T> *vec) {
-        assert(vec->size() <= n);
         if (vec->size() == n)
             return;
         if (leftSon != nullptr)
             leftSon->getNLowest(n, vec);
-        assert(vec->size() <= n);
         if (n == vec->size())
             return;
         vec->push_back(data);
@@ -479,7 +420,6 @@ public:
         if (tree == nullptr)
             throw NotExist();
         InnerAvlTree<T> *maxNode = tree->getMax();
-        assert(maxNode != nullptr);
         return maxNode->getData();
     }
 
@@ -495,8 +435,6 @@ public:
 
         auto inserted = tree->insert(x);
         balance(inserted);
-        assert(tree->validate_height());
-        assert(tree->allBalanceFactorUnder1());
         tree->setMax();
     }
 
@@ -509,8 +447,6 @@ public:
         }
         auto inserted = tree->insert_unique(std::move(x));
         balance(inserted);
-        assert(tree->validate_height());
-        assert(tree->allBalanceFactorUnder1());
         tree->setMax();
     }
 
@@ -529,7 +465,6 @@ public:
                 cout << *result.at(i) << ", ";
             }
             cout << endl;
-            assert(false);
         }
         return result;
     }
@@ -540,8 +475,6 @@ public:
         bool willRootBeDeleted = info == tree->getData();
         InnerAvlTree<T> *newTree = tree->remove(info);
         if (willRootBeDeleted) {
-            assert(tree != newTree);
-            assert(newTree == nullptr || newTree->notExists(tree));
             if (newTree != nullptr) {
                 newTree->nullifyFather();
                 newTree = newTree->balance();
@@ -553,8 +486,6 @@ public:
             tree->updateHeight();
             tree->setMax();
         }
-        assert(tree == nullptr || tree->validate_height());
-        assert(tree == nullptr || tree->allBalanceFactorUnder1());
     }
 
     void recursiveAvl(my_vector<T> &vector) {
@@ -568,7 +499,6 @@ public:
     }
 
     void balance(InnerAvlTree<T> *current) {
-        assert(current != nullptr);
         while (current != nullptr) {
             current = current->balance();
             if (current->getFather() == nullptr) {
@@ -578,11 +508,6 @@ public:
             current->updateHeight();
         }
         tree = current;
-        if (tree != nullptr) {
-            assert(tree->validate_height());
-            assert(tree->allBalanceFactorUnder1());
-        }
-
     }
 
     my_vector<T> getNLowest(int n) {

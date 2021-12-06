@@ -33,7 +33,6 @@ public:
     }
 
     void setGroup(Group *g) {
-        assert(g != nullptr);
         group = g;
     }
 
@@ -180,7 +179,6 @@ public:
     }
 
     Group(std::unique_ptr<Group> other) : id(other->id) {
-        assert(other.get() != nullptr);
         playersByLevel = other->playersByLevel;
         other->playersByLevel = nullptr;
     }
@@ -216,7 +214,6 @@ public:
     }
 
     const AvlTree<PlayerLevel> &getPlayersByLevel() const {
-        assert(playersByLevel != nullptr);
         return *playersByLevel;
     }
 

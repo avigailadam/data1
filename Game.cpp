@@ -34,7 +34,6 @@ void Game::RemovePlayer(int playerId) {
     PlayerLevel tmpLevel(&playerById);
     PlayerLevel &playerByLevel = levelsTree.find(tmpLevel);
     Group *group = playerByLevel.getGroup();
-    assert(!group->getPlayersByLevel().isEmpty());
     PlayerLevel prevMax = group->getPlayersByLevel().getMax();
     group->removePlayer(playerByLevel);
     levelsTree.remove(playerByLevel);
@@ -76,16 +75,13 @@ void Game::ReplaceGroup(int groupID, int replacementID) {
     groupTree.remove(repGroup);
     groupTree.insert_unique(std::unique_ptr<Group>(new Group(replacementID, merged)));
     Group &newGroup = groupTree.find(Group(replacementID));
-    assert(!newGroup.isEmpty());
     BestPlayerByGroup newBest(groupTree.find(groupTmp2).getPlayersByLevel().getMax().getId(), replacementID);
     bestPlayersPerGroup.insert(newBest);
     my_vector<PlayerLevel *> newPlayers = newGroup.getInorderLevel();
 
     for (int i = 0; i < newPlayers.size(); ++i) {
         auto p = newPlayers.at(i);
-        assert(p != nullptr);
         PlayerById *pId = p->getPlayerById();
-        assert(pId != nullptr);
         pId->setGroup(&newGroup);
     }
 }
@@ -96,7 +92,6 @@ void Game::IncreaseLevel(int playerID, int levelIncrease) {
     PlayerById tmpById(playerTmp);
     PlayerById &playerById = playersTree.find(tmpById);
     Group *group = playerById.getGroup();
-    assert(group != nullptr);
     BestPlayerByGroup prevMax(*group);
     int level = playerById.getLevel();
     RemovePlayer(playerID);
@@ -156,26 +151,20 @@ my_vector<int> Game::getGroupsHighestLevel(int numOfGroups) {
 }
 
 my_vector<PlayerLevel> Game::merge(my_vector<PlayerLevel *> v1, my_vector<PlayerLevel *> v2) {
-    assert(v1.is_sorted_ptr());
-    assert(v2.is_sorted_ptr());
     my_vector<PlayerLevel> res(v1.size() + v2.size());
     auto i1 = 0;
     auto i2 = 0;
     while (i1 < v1.size() || i2 < v2.size()) {
         if (i1 != v1.size() && (i2 == v2.size() || *v1.at(i1) < *v2.at(i2))) {
             PlayerLevel *pLevel = v1.at(i1);
-            assert(pLevel != nullptr);
             res.push_back(*pLevel);
             i1++;
             continue;
         }
-        assert(i2 < v2.size());
         PlayerLevel *pLevel = v2.at(i2);
-        assert(pLevel != nullptr);
             res.push_back(*pLevel);
         i2++;
     }
-    assert(res.is_sorted());
     return res;
 }
 
