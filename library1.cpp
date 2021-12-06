@@ -3,7 +3,12 @@
 #include "Game.h"
 
 void *Init() {
-    Game *DS = new Game();
+    Game* DS;
+    try {
+        DS = new Game();
+    } catch (std::bad_alloc &e) {
+        return nullptr;
+    }
     return (void *) DS;
 }
 
