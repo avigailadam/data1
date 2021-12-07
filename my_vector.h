@@ -34,7 +34,7 @@ public:
         }
     }
 
-    my_vector(int maxSize) : max_size(maxSize) , current_size(0), is_slice(false), array(new T[maxSize]){
+    explicit my_vector(int maxSize) : array(new T[maxSize]),max_size(maxSize) , current_size(0), is_slice(false){
 
     }
 
@@ -81,13 +81,6 @@ public:
     bool is_sorted_ptr() const {
         for (int i = 0; i < size() - 1; ++i) {
             if (*at(i) > *at(i + 1))
-                return false;
-        }
-        return true;
-    }
-    bool is_sorted() const {
-        for (int i = 0; i < size() - 1; ++i) {
-            if (at(i) > at(i + 1))
                 return false;
         }
         return true;
