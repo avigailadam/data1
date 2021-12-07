@@ -13,7 +13,7 @@ void *Init() {
 }
 
 StatusType AddGroup(void *DS, int GroupID) {
-    if (DS == NULL || GroupID <= 0) return INVALID_INPUT;
+    if (DS == nullptr || GroupID <= 0) return INVALID_INPUT;
     try { ((Game *) DS)->AddGroup(GroupID); }
     catch (std::bad_alloc &e) { return ALLOCATION_ERROR; }
     catch (AlreadyExist &res) { return FAILURE; }
@@ -21,7 +21,7 @@ StatusType AddGroup(void *DS, int GroupID) {
 }
 
 StatusType AddPlayer(void *DS, int PlayerID, int GroupID, int Level) {
-    if (DS == NULL || GroupID <= 0 || PlayerID <= 0 || Level < 0) return INVALID_INPUT;
+    if (DS == nullptr || GroupID <= 0 || PlayerID <= 0 || Level < 0) return INVALID_INPUT;
     try { ((Game *) DS)->AddPlayer(PlayerID, GroupID, Level); }
     catch (std::bad_alloc &e) { return ALLOCATION_ERROR; }
     catch (AlreadyExist &res) { return FAILURE; }
@@ -30,14 +30,14 @@ StatusType AddPlayer(void *DS, int PlayerID, int GroupID, int Level) {
 }
 
 StatusType RemovePlayer(void *DS, int PlayerID) {
-    if (DS == NULL || PlayerID <= 0) return INVALID_INPUT;
+    if (DS == nullptr || PlayerID <= 0) return INVALID_INPUT;
     try { ((Game *) DS)->RemovePlayer(PlayerID); }
     catch (NotExist &res) { return FAILURE; }
     return SUCCESS;
 }
 
 StatusType ReplaceGroup(void *DS, int GroupID, int ReplacementID) {
-    if (DS == NULL || GroupID <= 0 || ReplacementID <= 0 || GroupID == ReplacementID)
+    if (DS == nullptr || GroupID <= 0 || ReplacementID <= 0 || GroupID == ReplacementID)
         return INVALID_INPUT;
     try { ((Game *) DS)->ReplaceGroup(GroupID, ReplacementID); }
     catch (std::bad_alloc &e) { return ALLOCATION_ERROR; }
@@ -47,7 +47,7 @@ StatusType ReplaceGroup(void *DS, int GroupID, int ReplacementID) {
 }
 
 StatusType IncreaseLevel(void *DS, int PlayerID, int LevelIncrease) {
-    if (DS == NULL || LevelIncrease <= 0 || PlayerID <= 0)
+    if (DS == nullptr || LevelIncrease <= 0 || PlayerID <= 0)
         return INVALID_INPUT;
     try { ((Game *) DS)->IncreaseLevel(PlayerID, LevelIncrease); }
     catch (std::bad_alloc &e) { return ALLOCATION_ERROR; }
@@ -56,7 +56,7 @@ StatusType IncreaseLevel(void *DS, int PlayerID, int LevelIncrease) {
 }
 
 StatusType GetHighestLevel(void *DS, int GroupID, int *PlayerID) {
-    if (DS == NULL || PlayerID == NULL || GroupID == 0)
+    if (DS == nullptr || PlayerID == nullptr || GroupID == 0)
         return INVALID_INPUT;
     try { *PlayerID = ((Game *) DS)->getHighestLevel(GroupID); }
     catch (NotExist &res) { return FAILURE; }
@@ -64,7 +64,7 @@ StatusType GetHighestLevel(void *DS, int GroupID, int *PlayerID) {
 }
 
 StatusType GetAllPlayersByLevel(void *DS, int GroupID, int **Players, int *numOfPlayers) {
-    if (DS == NULL || GroupID == 0 || Players == NULL || numOfPlayers == NULL)
+    if (DS == nullptr || GroupID == 0 || Players == nullptr || numOfPlayers == nullptr)
         return INVALID_INPUT;
     try {
         my_vector<int> vec = ((Game *) DS)->GetAllPlayersByLevel(GroupID);

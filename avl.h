@@ -341,27 +341,6 @@ public:
         return balance();
     }
 
-    void debugTree(int depth) {
-        for (int i = 0; i < depth; ++i) {
-            cout << "  ";
-        }
-        cout << data << endl;
-        if (leftSon != nullptr) {
-            for (int i = 0; i < depth; ++i) {
-                cout << "  ";
-            }
-            cout << "Left son" << endl;
-            leftSon->debugTree(depth + 1);
-        }
-        if (rightSon != nullptr) {
-            for (int i = 0; i < depth; ++i) {
-                cout << "  ";
-            }
-            cout << "Right son" << endl;
-            rightSon->debugTree(depth + 1);
-        }
-    }
-
     bool notExists(InnerAvlTree<T> *check) const {
         if (rightSon != nullptr)
             rightSon->notExists(check);
@@ -370,15 +349,6 @@ public:
         return true;
     }
 
-    void validate_unique() {
-        auto vec = inOrder();
-        for (int i = 0; i < vec.size() - 1; ++i) {
-            if (false == (*(vec.at(i)) < *(vec.at(i + 1)))) {
-                debugTree(0);
-                cout << vec << endl;
-            }
-        }
-    }
 
 
     void getNLowest(int n, my_vector<T> *vec) {
@@ -494,9 +464,6 @@ public:
         tree = new InnerAvlTree<T>(vector);
     }
 
-    bool validateHeight() {
-        return tree == nullptr ? true : tree->validate_height();
-    }
 
     void balance(InnerAvlTree<T> *current) {
         while (current != nullptr) {
@@ -515,14 +482,6 @@ public:
         if (tree != nullptr)
             tree->getNLowest(n, &vec);
         return vec;
-    }
-
-    void debugTree() {
-        if (tree == nullptr) {
-            cout << "null" << endl;
-            return;
-        }
-        tree->debugTree(0);
     }
 
 };
